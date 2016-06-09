@@ -1,0 +1,27 @@
+{
+  "name": "hapi-route-generator",
+  "version": "0.0.1",
+  "description": "A route generator for Hapi",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha test/**/*.js",
+    "devTest": "mocha -w -c -R nyan -u bdd test/**/*.js"
+  },
+  "author": "Ruben Paz",
+  "license": "ISC",
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "hapi": "^13.4.1",
+    "hapi-sequelize": "^2.2.4",
+    "mocha": "^2.5.3",
+    "pg": "^5.0.0",
+    "sequelize": "^3.23.3"
+  },
+  "peerDependencies": {
+    "sequelize": "3.x",
+    "hapi-sequelize": ">= 2.x < 4"
+  },
+  "dependencies": {
+    "ramda": "^0.21.0"
+  }
+}
