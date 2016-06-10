@@ -2,6 +2,7 @@
 
 const chai = require('chai');
 const should = chai.should();
+const expect = chai.expect;
 const hapi = require('./serverSetup');
 const R = require('ramda');
 
@@ -90,5 +91,60 @@ describe('utils', () => {
     });
 
 
+  });
+
+  describe('Request Validator', () => {
+    const pathValidator = require('../src/utils/pathValidator');
+    const modelRelations = require('../src/utils/modelRelations');
+    let relationSchema;
+
+    before(() => {
+      relationSchema = modelRelations(sequelize);
+    });
+
+    it('should return invalid when sending POST with row scope', () => {
+      let result = pathValidator(relationSchema, 'post', ['users', 'id']);
+      result.status.should.equal('invalid');
+    });
+
+    it('should return invalid when sending put with table scope', () => {
+      let result = pathValidator(relationSchema, 'put', ['users', 'id', 'addresses']);
+      result.status.should.equal('invalid');
+    });
+
+    it('should return invalid when the table does not exist', () => {
+      let result = pathValidator(relationSchema, 'get', ['users', 'id', 'nonvalid']);
+      result.status.should.equal('invalid');
+    });
+
+    it('should return valid when the table exists and get', () => {
+      let result = pathValidator(relationSchema, 'get', ['users']);
+      result.status.should.equal('valid');
+    });
+
+    it('should return valid when the table exists and post', () => {
+      let result = pathValidator(relationSchema, 'post', ['users']);
+      result.status.should.equal('valid');
+    });
+
+    it('should return valid when the table exists and delete', () => {
+      let result = pathValidator(relationSchema, 'delete', ['users']);
+      result.status.should.equal('valid');
+    });
+
+    it('should return invalid when the table does not exist and get row', () => {
+      let result = pathValidator(relationSchema, 'get', ['nonexist', 'id']);
+      result.status.should.equal('invalid');
+    });
+
+    it('should return invalid when the table does not exist and put row', () => {
+      let result = pathValidator(relationSchema, 'put', ['nonexist', 'id']);
+      result.status.should.equal('invalid');
+    });
+
+    it('should return invalid when the table does not exist and delete row', () => {
+      let result = pathValidator(relationSchema, 'delete', ['nonexist', 'id']);
+      result.status.should.equal('invalid');
+    });
   });
 });
