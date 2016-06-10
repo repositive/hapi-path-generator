@@ -1,8 +1,12 @@
 'use strict';
 
 module.exports = function modelIdentifiers(model) {
-   return Object.keys(model.tableAttributes).filter((value) => {
-     let definition = model.tableAttributes[value];
-     return definition.primaryKey === true || definition.unique === true;
+    let identifiers = {};
+    Object.keys(model.tableAttributes).forEach((value) => {
+      let definition = model.tableAttributes[value];
+      if(definition.primaryKey === true || definition.unique === true) {
+        identifiers[value] = true;
+      }
    });
+   return identifiers;
 };

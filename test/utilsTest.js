@@ -30,19 +30,19 @@ describe('utils', () => {
 
     it('should return an array', () => {
       should.exist(identifiers);
-      identifiers.should.be.a('array');
+      identifiers.should.be.a('object');
     });
 
     it('should contain all the identifiers of the object', () => {
-      R.contains('id', identifiers).should.equal(true);
+      should.exist(identifiers.id);
     });
 
     it('should not contain stuff that is not identifier', () => {
-      R.contains('name', identifiers).should.equal(false);
+      should.not.exist(identifiers.name);
     });
 
     it('should contain also unique fields', () => {
-      R.contains('nationalId', identifiers).should.equal(true);
+      should.exist(identifiers.nationalId);
     });
   });
 
