@@ -75,16 +75,21 @@ describe('utils', () => {
     it('should contain a representation of the relations in the db', () => {
       let example = {
         users: {
+          model: 'user',
           addresses: 'external'
         },
         addresses: {
+          model: 'address',
           users: 'own',
           poscodes: 'own'
         },
         poscodes: {
+          model: 'poscode',
           addresses: 'external'
         },
-        nonrelated: {}
+        nonrelated: {
+          model: 'nonrelated'
+        }
       };
       let relations = modelRelations(sequelize);
       relations.should.deep.equal(example);

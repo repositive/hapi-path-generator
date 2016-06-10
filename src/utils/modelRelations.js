@@ -25,6 +25,8 @@ module.exports = function modelRelationTree(sequelize) {
     if(!globalRelations[model.tableName]) {
       globalRelations[model.tableName] = {};
     }
+    globalRelations[model.tableName].model = model.name;
+
 
     let relations = relationExtractor(model);
     let own = {};
