@@ -1,10 +1,11 @@
 {
   "db": {
-    "host": "localhost",
+    "host": "postgres",
     "port": 5432,
     "database": "testing",
-    "user": "repositive",
-    "pass": "repositive",
-    "dialect": "postgres"
+    "user": "postgres",
+    "pass": "postgres",
+    "dialect": "postgres",
+    "logging": false
   }
 }

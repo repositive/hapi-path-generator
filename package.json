@@ -3,9 +3,12 @@
   "version": "0.0.1",
   "description": "A route generator for Hapi",
   "main": "index.js",
+  "repository": {
+    "type": "private"
+  },
   "scripts": {
-    "test": "mocha test/**/*.js",
-    "devTest": "mocha -w -c -R nyan -u bdd test/**/*.js"
+    "test": "mocha test/**/*Test.js",
+    "devTest": "mocha -w -c -R nyan -u bdd test/**/*Test.js"
   },
   "author": "Ruben Paz",
   "license": "ISC",
