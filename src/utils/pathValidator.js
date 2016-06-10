@@ -7,33 +7,26 @@ const R = require('ramda');
  *  Validates if a request is valid or not
  *  @param {object} relationSchema
  *  @param {string} method
- *  @param {array} parsedPath
+ *  @param {array} path
  *  @returns {object} With feedback about the request validation
  */
-module.exports = function pathValidator(relationSchema, method, parsedPath) {
+module.exports = function pathValidator(relationSchema, method, path) {
 
-  /* [tableName, tableId, relationName, relationId ...]
-   * If the length of the parsedPath is even the scope is always row.
-   */
-  let scope = (parsedPath.length % 2) === 0 ? scopes.row : scopes.table;
+  try {
+    let parsedPath = pathParser(relationSchema, path);
+    let scope = R.isNil(parsedPath[0].identifier) ? scopes.table : scopes.row;
 
-  if(scope.methods[method]) {
-    let table = parsedPath.shift();
-
-    if(relationSchema[table]) {
-      if(parsedPath.length > 1) {
-        parsedPath.shift();
-        return pathValidator(relationSchema, method, parsedPath);
-      }
-      return { status: 'valid', scope: scope.name };
-      
-    } else {
-      return { status: 'invalid', message: `The ${table} resource does not exist`};
+    if(scope.methods[method]) {
+      return { status: 'valid', scope: scope.name, parsedPath: parsedPath };
+    }
+    else {
+      return { status: 'invalid', message: `You can't ${method} in a ${scope.name}`};
     }
   }
-  else {
-    return { status: 'invalid', message: `You can't ${method} in a ${scope.name}`};
+  catch(error) {
+    return { status: 'invalid', message: error.message };
   }
+
 };
 
 let scopes = module.exports.scopes = {
@@ -56,4 +49,50 @@ let scopes = module.exports.scopes = {
       delete: true
     }
   }
+};
+
+
+
+/**
+ *  Returns the path properly formated for future computation
+ *  @param {string} path
+ *  @returns {object} The path parsed
+ */
+let pathParser = module.exports.pathParser = function pathParser(relationSchema, path) {
+  let pathArray = path.split('/');
+  pathArray.shift();
+
+  if (pathArray[pathArray.length -1] === '') {
+    pathArray.pop();
+  }
+
+
+  function reducer(acc, arr) {
+    if(arr.length === 0) {
+      return acc;
+    }
+
+    let val = arr.pop();
+
+    if(acc.length % 2 === 0) {
+      if(R.isNil(relationSchema[val])) {
+        throw new Error(`The resource ${val} does not exist`);
+      }
+      if(acc.length === 0) {
+        acc.push({table: val});
+      }
+      else {
+        acc[acc.length -1].table = val;
+      }
+    }
+    else {
+      acc.push({ identifier: val });
+    }
+
+    return reducer(acc, arr);
+  }
+
+
+  return reducer([], pathArray);
+
 };
