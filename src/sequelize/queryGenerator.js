@@ -30,7 +30,7 @@ module.exports = function queryGenerator(parsedPath, params, query) {
   //   order: ''
   // }
 
-  let pathHead = parsedPath.shift();
+  let pathHead = parsedPath.pop();
 
   let q = {
     model: pathHead.model

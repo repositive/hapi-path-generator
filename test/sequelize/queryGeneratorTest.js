@@ -71,18 +71,18 @@ describe('sequelizeQueryGenerator', () => {
     let parsedPath = pathValidator(schema, 'get', '/users/1/addresses').parsedPath;
     let query = util.inspect(queryGenerator(parsedPath, {}));
     query.should.deep.equal(util.inspect({
-      model: sequelize.models.address,
+      model: sequelize.models.user,
       include: [
         {
-          model: sequelize.models.user,
-          where: {
-            $or: {
-              id: 1,
-              nationalId: '1'
-            }
-          }
+          model: sequelize.models.address
         }
-      ]
+      ],
+      where: {
+        $or: {
+          id: 1,
+          nationalId: '1'
+        }
+      }
     }));
   });
 });

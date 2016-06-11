@@ -16,8 +16,10 @@ const hapiRouteGenerator = {
         reply(validation);
       }
       else {
-        let query = sequelizeQueryGenerator(validation.parsedPath, {});
-        query.model.findAll(query)
+        let parsedPath = validation.parsedPath;
+        let model = parsedPath[0].model;
+        let query = sequelizeQueryGenerator(parsedPath, {});
+        model.findAll(query)
         .then((response) => {
           reply(response);
         })
