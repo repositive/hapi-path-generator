@@ -7,11 +7,10 @@ const R = require('ramda');
 /**
  *  Generates queries for sequelize
  *  @param {relationSchema} relations
- *  @param {sequelizeModel} model
  *  @param {object} params
  *  @returns The generated query
  */
-module.exports = function queryGenerator(sequelize, parsedPath, params, query) {
+module.exports = function queryGenerator(parsedPath, params, query) {
 
   // Parameters is an object wich can define the following rules.
   // {
@@ -34,7 +33,7 @@ module.exports = function queryGenerator(sequelize, parsedPath, params, query) {
   let pathHead = parsedPath.shift();
 
   let q = {
-    model: sequelize.models[pathHead.model]
+    model: pathHead.model
   };
 
   if(query) {
@@ -73,7 +72,7 @@ module.exports = function queryGenerator(sequelize, parsedPath, params, query) {
     return q;
   }
   else {
-    return queryGenerator(sequelize, parsedPath, params, q);
+    return queryGenerator(parsedPath, params, q);
   }
 
 };

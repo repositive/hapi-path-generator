@@ -5,6 +5,7 @@ const should = chai.should();
 const expect = chai.expect;
 const hapi = require('../serverSetup');
 const R = require('ramda');
+const util = require('util');
 
 describe('sequelizeQueryGenerator', () => {
   const queryGenerator = require('../../src/sequelize/queryGenerator');
@@ -28,58 +29,60 @@ describe('sequelizeQueryGenerator', () => {
 
   it('should return an object', () => {
     let parsedPath = pathValidator(schema, 'get', '/users').parsedPath;
-    let query = queryGenerator(sequelize, parsedPath, {});
+    let query = queryGenerator(parsedPath, {});
     should.exist(query);
     query.should.be.a('object');
   });
 
   it('should create query for table scope', () => {
     let parsedPath = pathValidator(schema, 'get', '/users').parsedPath;
-    let query = queryGenerator(sequelize, parsedPath, {});
-    query.should.deep.equal({model: sequelize.models.user});
+    let query = util.inspect(queryGenerator(parsedPath, {}));
+    query.should.deep.equal(util.inspect(
+      { model: sequelize.models.user }
+    ));
   });
 
   it('should create query for row scope (non numbers)', () => {
-    let parsedPath = pathValidator(schema, 'get', '/users/s2ln').parsedPath.reverse();
-    let query = queryGenerator(sequelize, parsedPath, {});
-    query.should.deep.equal({
+    let parsedPath = pathValidator(schema, 'get', '/users/s2ln').parsedPath;
+    let query = util.inspect(queryGenerator(parsedPath, {}));
+    query.should.deep.equal(util.inspect({
       model: sequelize.models.user,
       where: {
         nationalId: "s2ln"
       }
-    });
+    }));
   });
 
   it('should create query for row scope (numbers)', () => {
-    let parsedPath = pathValidator(schema, 'get', '/users/1').parsedPath.reverse();
-    let query = queryGenerator(sequelize, parsedPath, {});
-    query.should.deep.equal({
+    let parsedPath = pathValidator(schema, 'get', '/users/1').parsedPath;
+    let query = util.inspect(queryGenerator(parsedPath, {}));
+    query.should.deep.equal(util.inspect({
       model: sequelize.models.user,
       where: {
         $or: {
-          nationalId: '1',
-          id: 1
+          id: 1,
+          nationalId: '1'
         }
       }
-    });
+    }));
   });
 
   it('should create query for table though row join', () => {
-    let parsedPath = pathValidator(schema, 'get', '/users/1/addresses').parsedPath.reverse();
-    let query = queryGenerator(sequelize, parsedPath, {});
-    query.should.deep.equal({
+    let parsedPath = pathValidator(schema, 'get', '/users/1/addresses').parsedPath;
+    let query = util.inspect(queryGenerator(parsedPath, {}));
+    query.should.deep.equal(util.inspect({
       model: sequelize.models.address,
       include: [
         {
           model: sequelize.models.user,
           where: {
             $or: {
-              nationalId: '1',
-              id: 1
+              id: 1,
+              nationalId: '1'
             }
           }
         }
       ]
-    });
+    }));
   });
 });

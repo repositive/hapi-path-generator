@@ -5,6 +5,7 @@ const should = chai.should();
 const expect = chai.expect;
 const hapi = require('../serverSetup');
 const R = require('ramda');
+const util = require('util');
 
 describe('Model Relations', () => {
   const modelRelations = require('../../src/sequelize/modelRelations');
@@ -42,25 +43,25 @@ describe('Model Relations', () => {
   });
 
   it('should contain a representation of the relations in the db', () => {
-    let example = {
-      users: {
-        model: 'user',
-        addresses: 'external'
-      },
+    let example = util.inspect({
       addresses: {
-        model: 'address',
+        model: sequelize.models.address,
         users: 'own',
         poscodes: 'own'
       },
+      users: {
+        addresses: 'external',
+        model: sequelize.models.user
+      },
       poscodes: {
-        model: 'poscode',
-        addresses: 'external'
+        addresses: 'external',
+        model: sequelize.models.poscode
       },
       nonrelated: {
-        model: 'nonrelated'
+        model: sequelize.models.nonrelated
       }
-    };
-    let relations = modelRelations(sequelize);
+    });
+    let relations = util.inspect(modelRelations(sequelize));
     relations.should.deep.equal(example);
   });
 

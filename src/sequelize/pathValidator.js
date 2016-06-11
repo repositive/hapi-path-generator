@@ -1,7 +1,7 @@
 'use strict';
 
 const R = require('ramda');
-
+const modelIdentifiers = require('./modelIdentifiers');
 
 /**
  *  Validates if a request is valid or not
@@ -14,7 +14,7 @@ module.exports = function pathValidator(relationSchema, method, path) {
 
   try {
     let parsedPath = pathParser(relationSchema, path);
-    let scope = R.isNil(parsedPath[0].identifier) ? scopes.table : scopes.row;
+    let scope = R.isNil(parsedPath[parsedPath.length - 1].identifier) ? scopes.table : scopes.row;
 
     if(scope.methods[method]) {
       return { status: 'valid', scope: scope.name, parsedPath: parsedPath };
@@ -79,15 +79,15 @@ let pathParser = module.exports.pathParser = function pathParser(relationSchema,
         throw new Error(`The resource ${val} does not exist`);
       }
       if(acc.length === 0) {
-        acc.push({table: val, model: relationSchema[val].model});
+        acc.unshift({table: val, model: relationSchema[val].model});
       }
       else {
-        acc[acc.length -1].table = val;
-        acc[acc.length -1].model = relationSchema[val].model;
+        acc[0].table = val;
+        acc[0].model = relationSchema[val].model;
       }
     }
     else {
-      acc.push({ identifier: val });
+      acc.unshift({ identifier: val });
     }
 
     return reducer(acc, arr);

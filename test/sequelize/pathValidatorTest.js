@@ -5,6 +5,7 @@ const should = chai.should();
 const expect = chai.expect;
 const hapi = require('../serverSetup');
 const R = require('ramda');
+const util = require('util');
 
 describe('Request Validator', () => {
   const pathValidator = require('../../src/sequelize/pathValidator');
@@ -33,13 +34,20 @@ describe('Request Validator', () => {
     });
 
     it('should be able to parse table scopes', () => {
-      let usertable = pathParser(relationSchema, '/users');
-      usertable.should.deep.equal([{table:'users', model: 'user'}]);
+      let usertable = util.inspect(pathParser(relationSchema, '/users'));
+      usertable.should.deep.equal(util.inspect(
+        [{ table:'users', model: sequelize.models.user }]
+      ));
     });
 
     it('should be able to parse more complex table scopes', () => {
-      let usertable = pathParser(relationSchema, '/users/someId/addresses');
-      usertable.should.deep.equal([{table: 'addresses', model: 'address'},{table:'users', model: 'user', identifier: 'someId'}]);
+      let usertable = util.inspect(pathParser(relationSchema, '/users/someId/addresses'));
+      usertable.should.deep.equal(util.inspect(
+        [
+          { identifier: 'someId', table:'users', model: sequelize.models.user },
+          { table: 'addresses', model: sequelize.models.address }
+        ]
+      ));
     });
 
     it('should throw an exception if the table does not exist', () => {
