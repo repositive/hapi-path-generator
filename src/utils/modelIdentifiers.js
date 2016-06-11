@@ -5,7 +5,7 @@ module.exports = function modelIdentifiers(model) {
     Object.keys(model.tableAttributes).forEach((value) => {
       let definition = model.tableAttributes[value];
       if(definition.primaryKey === true || definition.unique === true) {
-        identifiers[value] = true;
+        identifiers[definition.field] = definition.type.constructor.key;
       }
    });
    return identifiers;
