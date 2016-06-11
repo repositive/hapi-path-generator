@@ -46,12 +46,12 @@ module.exports = function queryGenerator(sequelize, parsedPath, params, query) {
   if(pathHead.identifier) {
     let identifiers = modelIdentifiers(q.model);
     let nId = Number(pathHead.identifier);
-    if(!Number.isNaN(nId)) {
-      pathHead.identifier = nId;
-    }
     let idMatch = {};
     Object.keys(identifiers).forEach((id) => {
-      if(!(Number.isNaN(nId) && identifiers[id] === 'INTEGER')) {
+      if(identifiers[id] === 'INTEGER' && !Number.isNaN(nId)) {
+        idMatch[id] = nId;
+      }
+      else if(identifiers[id] !== 'INTEGER') {
         idMatch[id] = pathHead.identifier;
       }
     });

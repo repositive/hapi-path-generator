@@ -230,7 +230,7 @@ describe('utils', () => {
         model: sequelize.models.user,
         where: {
           $or: {
-            nationalId: 1,
+            nationalId: '1',
             id: 1
           }
         }
@@ -247,7 +247,7 @@ describe('utils', () => {
             model: sequelize.models.user,
             where: {
               $or: {
-                nationalId: 1,
+                nationalId: '1',
                 id: 1
               }
             }
