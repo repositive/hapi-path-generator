@@ -42,24 +42,12 @@ module.exports = function queryGenerator(parsedPath, params, query) {
 
   let where = {};
 
-  if(pathHead.identifier) {
-    let identifiers = modelIdentifiers(q.model);
-    let nId = Number(pathHead.identifier);
-    let idMatch = {};
-    Object.keys(identifiers).forEach((id) => {
-      if(identifiers[id] === 'INTEGER' && !Number.isNaN(nId)) {
-        idMatch[id] = nId;
-      }
-      else if(identifiers[id] !== 'INTEGER') {
-        idMatch[id] = pathHead.identifier;
-      }
-    });
-
-    if(Object.keys(idMatch).length == 1) {
-      where = idMatch;
+  if(pathHead.potentialIds) {
+    if(Object.keys(pathHead.potentialIds).length == 1) {
+      where = pathHead.potentialIds;
     }
-    else if(Object.keys(idMatch).length > 1) {
-      where.$or = idMatch;
+    else {
+      where.$or = pathHead.potentialIds;
     }
   }
 

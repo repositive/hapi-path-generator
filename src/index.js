@@ -1,8 +1,33 @@
 'use strict';
 
+const pathValidator = require('./sequelize/pathValidator');
+const modelRelations = require('./sequelize/modelRelations');
+const sequelizeQueryGenerator = require('./sequelize/queryGenerator');
+
 const hapiRouteGenerator = {
   register: function(server, options, done) {
-    //TODO Define options & parse them
+    let sequelize = server.plugins['hapi-sequelize'].db.sequelize;
+    let relationSchema = modelRelations(sequelize);
+
+    server.ext('onRequest', function(request, reply) {
+
+      let validation = pathValidator(relationSchema, request.method, request.path);
+      if(validation.status == 'invalid') {
+        reply(validation);
+      }
+      else {
+        let query = sequelizeQueryGenerator(validation.parsedPath, {});
+        query.model.findAll(query)
+        .then((response) => {
+          reply(response);
+        })
+        .catch((err) => {
+          reply(err);
+        });
+      }
+      // reply(request.path);
+    });
+
     done();
   }
 };

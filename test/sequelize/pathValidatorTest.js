@@ -40,11 +40,32 @@ describe('Request Validator', () => {
       ));
     });
 
-    it('should be able to parse more complex table scopes', () => {
-      let usertable = util.inspect(pathParser(relationSchema, '/users/someId/addresses'));
+    it('should show the potential ids for row scopes', () => {
+      let usertable = util.inspect(pathParser(relationSchema, '/users/1/'));
       usertable.should.deep.equal(util.inspect(
         [
-          { identifier: 'someId', table:'users', model: sequelize.models.user },
+          {
+            table: 'users', model: sequelize.models.user,
+            potentialIds: {
+              id: 1,
+              nationalId: '1'
+            }
+          }
+        ]
+      ));
+    });
+
+    it('should be able to parse more complex table scopes', () => {
+      let usertable = util.inspect(pathParser(relationSchema, '/users/1/addresses'));
+      usertable.should.deep.equal(util.inspect(
+        [
+          {
+            table:'users', model: sequelize.models.user,
+            potentialIds: {
+              id: 1,
+              nationalId: '1'
+            }
+          },
           { table: 'addresses', model: sequelize.models.address }
         ]
       ));
@@ -56,6 +77,25 @@ describe('Request Validator', () => {
       }
       expect(wrapper).to.throw('The resource nonexist does not exist');
     });
+
+    it('should throw an exception if the table in row scope does not exist', () => {
+      function wrapper() {
+        pathParser(relationSchema, '/nonexist/someId/');
+      }
+      expect(wrapper).to.throw('The resource nonexist does not exist');
+    });
+
+    it('should throw an exception if the identifier is not valid for the model', () => {
+      function wrapper() {
+        pathParser(relationSchema, '/addresses/someId/');
+      }
+      expect(wrapper).to.throw('The identifier someId is not valid');
+    });
+  });
+
+  it('should return valid for get row in user non number id', () => {
+    let result = pathValidator(relationSchema, 'get', '/users/s2ln');
+    result.status.should.equal('valid');
   });
 
   it('should return invalid when sending POST with row scope', () => {
@@ -89,7 +129,7 @@ describe('Request Validator', () => {
   });
 
   it('should return invalid when the table does not exist and get row', () => {
-    let result = pathValidator(relationSchema, 'get', '/users/id');
+    let result = pathValidator(relationSchema, 'get', '/users/1');
     result.status.should.equal('valid');
   });
 

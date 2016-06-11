@@ -14,7 +14,7 @@ module.exports = function pathValidator(relationSchema, method, path) {
 
   try {
     let parsedPath = pathParser(relationSchema, path);
-    let scope = R.isNil(parsedPath[parsedPath.length - 1].identifier) ? scopes.table : scopes.row;
+    let scope = R.isNil(parsedPath[parsedPath.length - 1].potentialIds) ? scopes.table : scopes.row;
 
     if(scope.methods[method]) {
       return { status: 'valid', scope: scope.name, parsedPath: parsedPath };
@@ -79,12 +79,35 @@ let pathParser = module.exports.pathParser = function pathParser(relationSchema,
         throw new Error(`The resource ${val} does not exist`);
       }
       if(acc.length === 0) {
-        acc.unshift({table: val, model: relationSchema[val].model});
+        acc.unshift({});
       }
-      else {
-        acc[0].table = val;
-        acc[0].model = relationSchema[val].model;
+      acc[0].table = val;
+      acc[0].model = relationSchema[val].model;
+
+      if(acc[0].identifier) {
+
+        let identifiers = modelIdentifiers(acc[0].model);
+        let nId = Number(acc[0].identifier);
+        let idMatch = {};
+
+        Object.keys(identifiers).forEach((id) => {
+          if(identifiers[id] === 'INTEGER' && !Number.isNaN(nId)) {
+            idMatch[id] = nId;
+          }
+          else if(identifiers[id] !== 'INTEGER') {
+            idMatch[id] = acc[0].identifier;
+          }
+        });
+
+        if(Object.keys(idMatch).length > 0) {
+          acc[0].potentialIds = idMatch;
+        } else {
+          throw new Error(`The identifier ${acc[0].identifier} is not valid for ${acc[0].model.name}.`);
+        }
+
+        delete acc[0].identifier;
       }
+
     }
     else {
       acc.unshift({ identifier: val });
