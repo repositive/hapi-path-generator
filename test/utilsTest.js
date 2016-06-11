@@ -45,6 +45,10 @@ describe('utils', () => {
     it('should contain also unique fields', () => {
       should.exist(identifiers.nationalId);
     });
+
+    it('should contain tye type of the fields', () => {
+      identifiers.id.should.equal('INTEGER');
+    });
   });
 
   describe('Model Relations', () => {
@@ -62,7 +66,7 @@ describe('utils', () => {
 
       it('should return all the relations of a table', () => {
         let relations = relationExtractor(models.address);
-        JSON.stringify(relations).should.equal(JSON.stringify(['users', 'poscodes']));
+        relations.should.deep.equal(['users', 'poscodes']);
       });
     });
 
@@ -118,12 +122,12 @@ describe('utils', () => {
 
       it('should be able to parse table scopes', () => {
         let usertable = pathParser(relationSchema, '/users');
-        usertable.should.deep.equal([{table:'users'}]);
+        usertable.should.deep.equal([{table:'users', model: 'user'}]);
       });
 
       it('should be able to parse more complex table scopes', () => {
         let usertable = pathParser(relationSchema, '/users/someId/addresses');
-        usertable.should.deep.equal([{table: 'addresses'},{table:'users', identifier: 'someId'}]);
+        usertable.should.deep.equal([{table: 'addresses', model: 'address'},{table:'users', model: 'user', identifier: 'someId'}]);
       });
 
       it('should throw an exception if the table does not exist', () => {
@@ -165,6 +169,11 @@ describe('utils', () => {
     });
 
     it('should return invalid when the table does not exist and get row', () => {
+      let result = pathValidator(relationSchema, 'get', '/users/id');
+      result.status.should.equal('valid');
+    });
+
+    it('should return invalid when the table does not exist and get row', () => {
       let result = pathValidator(relationSchema, 'get', '/nonexist/id');
       result.status.should.equal('invalid');
     });
@@ -177,6 +186,74 @@ describe('utils', () => {
     it('should return invalid when the table does not exist and delete row', () => {
       let result = pathValidator(relationSchema, 'delete', '/nonexist/id');
       result.status.should.equal('invalid');
+    });
+  });
+
+  describe('sequelizeQueryGenerator', () => {
+    const queryGenerator = require('../src/utils/sequelizeQueryGenerator');
+    const modelRelations = require('../src/utils/modelRelations');
+    const pathValidator = require('../src/utils/pathValidator');
+    let schema;
+
+    before(() => {
+      schema = modelRelations(sequelize);
+    });
+
+    it('should return an object', () => {
+      let parsedPath = pathValidator(schema, 'get', '/users').parsedPath;
+      let query = queryGenerator(sequelize, parsedPath, {});
+      should.exist(query);
+      query.should.be.a('object');
+    });
+
+    it('should create query for table scope', () => {
+      let parsedPath = pathValidator(schema, 'get', '/users').parsedPath;
+      let query = queryGenerator(sequelize, parsedPath, {});
+      query.should.deep.equal({model: sequelize.models.user});
+    });
+
+    it('should create query for row scope (non numbers)', () => {
+      let parsedPath = pathValidator(schema, 'get', '/users/s2ln').parsedPath.reverse();
+      let query = queryGenerator(sequelize, parsedPath, {});
+      query.should.deep.equal({
+        model: sequelize.models.user,
+        where: {
+          nationalId: "s2ln"
+        }
+      });
+    });
+
+    it('should create query for row scope (numbers)', () => {
+      let parsedPath = pathValidator(schema, 'get', '/users/1').parsedPath.reverse();
+      let query = queryGenerator(sequelize, parsedPath, {});
+      query.should.deep.equal({
+        model: sequelize.models.user,
+        where: {
+          $or: {
+            nationalId: 1,
+            id: 1
+          }
+        }
+      });
+    });
+
+    it('should create query for table though row join', () => {
+      let parsedPath = pathValidator(schema, 'get', '/users/1/addresses').parsedPath.reverse();
+      let query = queryGenerator(sequelize, parsedPath, {});
+      query.should.deep.equal({
+        model: sequelize.models.address,
+        include: [
+          {
+            model: sequelize.models.user,
+            where: {
+              $or: {
+                nationalId: 1,
+                id: 1
+              }
+            }
+          }
+        ]
+      });
     });
   });
 });

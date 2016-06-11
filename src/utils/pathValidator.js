@@ -74,15 +74,16 @@ let pathParser = module.exports.pathParser = function pathParser(relationSchema,
 
     let val = arr.pop();
 
-    if(acc.length % 2 === 0) {
+    if(arr.length % 2 === 0) {
       if(R.isNil(relationSchema[val])) {
         throw new Error(`The resource ${val} does not exist`);
       }
       if(acc.length === 0) {
-        acc.push({table: val});
+        acc.push({table: val, model: relationSchema[val].model});
       }
       else {
         acc[acc.length -1].table = val;
+        acc[acc.length -1].model = relationSchema[val].model;
       }
     }
     else {
