@@ -17,7 +17,7 @@ module.exports = function pathValidator(relationSchema, method, path) {
     let scope = R.isNil(parsedPath[parsedPath.length - 1].potentialIds) ? scopes.table : scopes.row;
 
     if(scope.methods[method]) {
-      return { status: 'valid', scope: scope.name, parsedPath: parsedPath };
+      return { status: 'valid', scope: scope.name, parsedPath: parsedPath, function: scope.methods[method] };
     }
     else {
       return { status: 'invalid', message: `You can't ${method} in a ${scope.name}`};
@@ -33,9 +33,9 @@ let scopes = module.exports.scopes = {
   row: {
     name: 'row',
     methods:  {
-      get: true,
-      put: true,
-      delete: true
+      get: 'findOne',
+      put: 'update',
+      delete: 'delete'
     }
   },
   /* Table should probably be splitted into another scope called relation.
@@ -44,9 +44,9 @@ let scopes = module.exports.scopes = {
   table: {
     name: 'table',
     methods: {
-      get: true,
-      post: true,
-      delete: true
+      get: 'findAll',
+      post: 'create',
+      delete: 'delete'
     }
   }
 };
@@ -75,6 +75,7 @@ let pathParser = module.exports.pathParser = function pathParser(relationSchema,
     let val = arr.pop();
 
     if(arr.length % 2 === 0) {
+      //TODO Check if the relation is possible and if it was queried already
       if(R.isNil(relationSchema[val])) {
         throw new Error(`The resource ${val} does not exist`);
       }

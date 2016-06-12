@@ -71,18 +71,48 @@ describe('sequelizeQueryGenerator', () => {
     let parsedPath = pathValidator(schema, 'get', '/users/1/addresses').parsedPath;
     let query = util.inspect(queryGenerator(parsedPath, {}));
     query.should.deep.equal(util.inspect({
-      model: sequelize.models.user,
+      model: sequelize.models.address,
       include: [
         {
-          model: sequelize.models.address
+          model: sequelize.models.user,
+          where: {
+            $or: {
+              id: 1,
+              nationalId: '1'
+            }
+          },
+          attributes: []
         }
-      ],
-      where: {
-        $or: {
-          id: 1,
-          nationalId: '1'
+      ]
+    }));
+  });
+
+  it('should create query for multiple nested tables', () => {
+    let parsedPath = pathValidator(schema, 'get', '/users/1/addresses/3/poscodes').parsedPath;
+    let query = util.inspect(queryGenerator(parsedPath, {}));
+    query.should.deep.equal(util.inspect({
+      model: sequelize.models.poscode,
+      include: [
+        {
+          model: sequelize.models.address,
+          include: [
+            {
+              model: sequelize.models.user,
+              where: {
+                $or: {
+                  id: 1,
+                  nationalId: '1'
+                }
+              },
+              attributes: []
+            }
+          ],
+          where: {
+              id: 3
+          },
+          attributes: []
         }
-      }
+      ]
     }));
   });
 });

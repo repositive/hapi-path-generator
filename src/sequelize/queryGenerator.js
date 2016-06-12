@@ -30,7 +30,7 @@ module.exports = function queryGenerator(parsedPath, params, query) {
   //   order: ''
   // }
 
-  let pathHead = parsedPath.pop();
+  let pathHead = parsedPath.shift();
 
   let q = {
     model: pathHead.model
@@ -60,6 +60,7 @@ module.exports = function queryGenerator(parsedPath, params, query) {
     return q;
   }
   else {
+    q.attributes = [];
     return queryGenerator(parsedPath, params, q);
   }
 

@@ -9,7 +9,7 @@ module.exports = function(sequelize, Types) {
       classMethods: {
         associate: function(models) {
           models.address.belongsTo(models.user);
-          // models.address.belongsTo(models.poscode);
+          models.address.belongsTo(models.poscode);
         }
       }
     }
