@@ -35,7 +35,7 @@ let scopes = module.exports.scopes = {
     methods:  {
       get: 'findOne',
       put: 'update',
-      delete: 'delete'
+      delete: 'destroy'
     }
   },
   /* Table should probably be splitted into another scope called relation.
@@ -46,7 +46,7 @@ let scopes = module.exports.scopes = {
     methods: {
       get: 'findAll',
       post: 'create',
-      delete: 'delete'
+      delete: 'destroy'
     }
   }
 };

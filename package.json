@@ -25,6 +25,7 @@
     "hapi-sequelize": ">= 2.x < 4"
   },
   "dependencies": {
-    "ramda": "^0.21.0"
+    "ramda": "^0.21.0",
+    "subtext": "^4.0.4"
   }
 }

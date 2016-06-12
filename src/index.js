@@ -3,6 +3,9 @@
 const pathValidator = require('./sequelize/pathValidator');
 const modelRelations = require('./sequelize/modelRelations');
 const sequelizeQueryGenerator = require('./sequelize/queryGenerator');
+const R = require('ramda');
+const Boom = require('boom');
+const subtext = require('subtext');
 
 const hapiRouteGenerator = {
   register: function(server, options, done) {
@@ -13,22 +16,66 @@ const hapiRouteGenerator = {
 
       let validation = pathValidator(relationSchema, request.method, request.path);
       if(validation.status == 'invalid') {
-        reply(validation);
+        reply.continue(validation);
       }
       else {
         let parsedPath = validation.parsedPath;
         let model = parsedPath[parsedPath.length - 1].model;
-        let query = sequelizeQueryGenerator(parsedPath, {});
-        // reply(validation.function);
-        model[validation.function](query)
-        .then((response) => {
-          reply(response);
+        let func = model[validation.function];
+
+        let funcParams = [];
+
+        new Promise((complete, reject) => {
+          if(R.contains(validation.function, ['update', 'findOne','findAll','destroy'])) {
+            let query = sequelizeQueryGenerator(parsedPath, {});
+            if(validation.function === 'update') {
+              query.returning = true;
+            }
+            funcParams.push(query);
+          }
+
+          if(R.contains(validation.function, ['create', 'update'])) {
+            subtext.parse(request.raw.req, null, { parse: true, output: 'data' } ,(err, parsed) => {
+              if(err) {
+                reject(err);
+              }
+              else {
+                funcParams.unshift(parsed.payload);
+                complete(funcParams);
+              }
+            });
+          }
+          else {
+            complete(funcParams);
+          }
+
+        })
+        .then((funcParams) => {
+
+          return func.apply(model, funcParams)
+          .then((response) => {
+
+            if(validation.function === 'update') {
+              reply((response && response[1][0]) || Boom.badRequest("Non existing id"));
+            }
+            else if(validation.function === 'destroy') {
+              reply(response == 1? {message: "deleted"} : Boom.badRequest('Non existing resource'));
+            }
+            else if(!response) {
+              reply({});
+            }
+            else {
+              reply(response);
+            }
+
+          });
+
         })
         .catch((err) => {
-          reply(err);
+          reply(Boom.badRequest(err));
         });
       }
-      // reply(request.path);
+
     });
 
     done();
