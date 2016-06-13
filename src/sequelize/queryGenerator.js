@@ -10,7 +10,7 @@ const R = require('ramda');
  *  @param {object} params
  *  @returns The generated query
  */
-module.exports = function queryGenerator(parsedPath, params, query) {
+module.exports = function queryGenerator(parsedPath, urlQuery, query) {
 
   // Parameters is an object wich can define the following rules.
   // {
@@ -57,11 +57,14 @@ module.exports = function queryGenerator(parsedPath, params, query) {
   }
 
   if(parsedPath.length === 0) {
+    if(Object.keys(urlQuery).length > 0) {
+      q.where = R.merge(urlQuery, q.where);
+    }
     return q;
   }
   else {
     q.attributes = [];
-    return queryGenerator(parsedPath, params, q);
+    return queryGenerator(parsedPath, urlQuery, q);
   }
 
 };

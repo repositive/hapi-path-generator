@@ -4,6 +4,8 @@ services:
     image: mhart/alpine-node
     command: node
     working_dir: /opt
+    expose:
+      - "3000"
     ports:
      - "3000:3000"
     volumes:

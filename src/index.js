@@ -27,7 +27,7 @@ const hapiRouteGenerator = {
 
         new Promise((complete, reject) => {
           if(R.contains(validation.function, ['update', 'findOne','findAll','destroy'])) {
-            let query = sequelizeQueryGenerator(parsedPath, {});
+            let query = sequelizeQueryGenerator(parsedPath, request.query);
             if(validation.function === 'update') {
               query.returning = true;
             }

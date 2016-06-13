@@ -115,4 +115,15 @@ describe('sequelizeQueryGenerator', () => {
       ]
     }));
   });
+
+  it('should add urlQuery parameters to the mix', () => {
+    let parsedPath = pathValidator(schema, 'get', '/users').parsedPath;
+    let query = util.inspect(queryGenerator(parsedPath, {name: 'Istar'}));
+    query.should.deep.equal(util.inspect({
+      model: sequelize.models.user,
+      where: {
+        name: 'Istar'
+      }
+    }));
+  });
 });
