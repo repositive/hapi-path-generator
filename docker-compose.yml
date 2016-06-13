@@ -1,0 +1,15 @@
+version: '2'
+services:
+  node:
+    build: docker
+    ports:
+     - "3000:3000"
+    volumes:
+     - .:/opt
+    depends_on:
+     - postgres
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: testing
