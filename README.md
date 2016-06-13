@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/repositive/hapi-path-generator.png?label=ready&title=Ready)](https://waffle.io/repositive/hapi-path-generator)
 Hapi Path Generator
 ---
 
