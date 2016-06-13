@@ -10,7 +10,7 @@ const subtext = require('subtext');
 
 const hapiRouteGenerator = {
   register: function(server, options, done) {
-    let sequelize = server.plugins['hapi-sequelize'].db.sequelize;
+    let sequelize = options.sequelize;
     let relationSchema = modelRelations(sequelize);
 
     server.ext('onRequest', function(request, reply) {
