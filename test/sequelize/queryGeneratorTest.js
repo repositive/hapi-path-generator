@@ -11,6 +11,7 @@ describe('sequelizeQueryGenerator', () => {
   const queryGenerator = require('../../src/sequelize/queryGenerator');
   const modelRelations = require('../../src/sequelize/modelRelations');
   const pathValidator = require('../../src/sequelize/pathValidator');
+  const queryValidator = require('../../src/sequelize/urlQueryValidator');
   let schema;
   let relationSchema;
   let server;
@@ -124,6 +125,38 @@ describe('sequelizeQueryGenerator', () => {
       where: {
         name: 'Istar'
       }
+    }));
+  });
+
+  it('should remove embed from the query parameters', () => {
+    let parsedPath = pathValidator(schema, 'get', '/users').parsedPath;
+    let parsedQuery = queryValidator(schema, models.user, {name: 'Istar', embed: []});
+    let query = util.inspect(queryGenerator(parsedPath, parsedQuery));
+    query.should.deep.equal(util.inspect({
+      model: models.user,
+      where: {
+        name: 'Istar'
+      }
+    }));
+  });
+
+  it('if embed is present show nested objects', () => {
+    let parsedPath = pathValidator(schema, 'get', '/users/1/addresses').parsedPath;
+    let parsedQuery = queryValidator(schema, models.user, {embed: ['users']});
+    let query = util.inspect(queryGenerator(parsedPath, parsedQuery));
+    query.should.deep.equal(util.inspect({
+      model: models.address,
+      include: [
+        {
+          model: models.user,
+          where: {
+            $or: {
+              id: 1,
+              nationalId: '1'
+            }
+          },
+        }
+      ]
     }));
   });
 });

@@ -37,6 +37,12 @@ module.exports = function queryGenerator(parsedPath, urlQuery, query) {
   };
 
   if(query) {
+    if(urlQuery.embed && urlQuery.embed[query.model.tableName]) {
+      delete urlQuery.embed[query.model.tableName];
+    }
+    else {
+      query.attributes = [];
+    }
     q.include = [query];
   }
 
@@ -57,13 +63,26 @@ module.exports = function queryGenerator(parsedPath, urlQuery, query) {
   }
 
   if(parsedPath.length === 0) {
+
+    if(urlQuery.embed && Object.keys(urlQuery.embed).length > 0) {
+      let remainingToEmbed = [];
+
+      Object.keys(urlQuery.embed).forEach((model) => {
+        remainingToEmbed.push({
+          model: urlQuery.embed[model]
+        });
+      });
+      q.include = R.concat(q.include || [], remainingToEmbed);
+    }
+
+
+    delete urlQuery.embed;
     if(Object.keys(urlQuery).length > 0) {
       q.where = R.merge(urlQuery, q.where);
     }
     return q;
   }
   else {
-    q.attributes = [];
     return queryGenerator(parsedPath, urlQuery, q);
   }
 

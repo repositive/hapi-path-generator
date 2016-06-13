@@ -1,6 +1,7 @@
 'use strict';
 
 const pathValidator = require('./sequelize/pathValidator');
+const queryValidator = require('./sequelize/urlQueryValidator');
 const modelRelations = require('./sequelize/modelRelations');
 const sequelizeQueryGenerator = require('./sequelize/queryGenerator');
 const R = require('ramda');
@@ -20,14 +21,14 @@ const hapiRouteGenerator = {
       }
       else {
         let parsedPath = validation.parsedPath;
+        let parsedUrlQuery = queryValidator(request.query);
         let model = parsedPath[parsedPath.length - 1].model;
         let func = model[validation.function];
 
-        let funcParams = [];
-
         new Promise((complete, reject) => {
+          let funcParams = [];
           if(R.contains(validation.function, ['update', 'findOne','findAll','destroy'])) {
-            let query = sequelizeQueryGenerator(parsedPath, request.query);
+            let query = sequelizeQueryGenerator(parsedPath, parsedUrlQuery);
             if(validation.function === 'update') {
               query.returning = true;
             }
