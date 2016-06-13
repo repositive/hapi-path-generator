@@ -21,8 +21,8 @@ const hapiRouteGenerator = {
       }
       else {
         let parsedPath = validation.parsedPath;
-        let parsedUrlQuery = queryValidator(request.query);
         let model = parsedPath[parsedPath.length - 1].model;
+        let parsedUrlQuery = queryValidator(relationSchema, model, request.query);
         let func = model[validation.function];
 
         new Promise((complete, reject) => {
