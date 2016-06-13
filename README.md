@@ -33,8 +33,8 @@ const hapiPath =require('hapi-path-generator');
 server.connection({ port: 3000 });
 
 server.register({
-  register: sequelize,
-  options: R.merge(config.db, { models: ["test/models/**/*.js"] })
+    register: sequelize,
+    options: config.db
   }, (err) => {
   if(err) {
     throw err;
