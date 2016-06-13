@@ -1,5 +1,5 @@
 {
-  "name": "hapi-route-generator",
+  "name": "hapi-path-generator",
   "version": "0.0.1",
   "description": "A route generator for Hapi",
   "main": "index.js",
