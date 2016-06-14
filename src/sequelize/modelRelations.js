@@ -1,6 +1,6 @@
 'use strict';
 const R = require('ramda');
-
+const modelIdentifiers = require('./modelIdentifiers');
 
 /**
  *  Creates a representation of the relations between the models
@@ -26,7 +26,7 @@ module.exports = function modelRelationTree(sequelize) {
       globalRelations[model.tableName] = {};
     }
     globalRelations[model.tableName].model = model;
-
+    globalRelations[model.tableName].identifiers = modelIdentifiers(model);
 
     let relations = relationExtractor(model);
     let own = {};

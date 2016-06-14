@@ -10,7 +10,7 @@ const util = require('util');
 describe('sequelizeQueryGenerator', () => {
   const queryGenerator = require('../../src/sequelize/queryGenerator');
   const modelRelations = require('../../src/sequelize/modelRelations');
-  const pathValidator = require('../../src/sequelize/pathValidator');
+  const pathValidator = require('../../src/pathValidator');
   const queryValidator = require('../../src/sequelize/urlQueryValidator');
   let schema;
   let relationSchema;

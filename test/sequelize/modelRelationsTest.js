@@ -46,19 +46,32 @@ describe('Model Relations', () => {
     let example = util.inspect({
       addresses: {
         model: sequelize.models.address,
+        identifiers: {
+          id: 'INTEGER'
+        },
         users: 'own',
         poscodes: 'own'
       },
       users: {
         addresses: 'external',
-        model: sequelize.models.user
+        model: sequelize.models.user,
+        identifiers: {
+          id: 'INTEGER',
+          nationalId: 'STRING'
+        },
       },
       poscodes: {
         addresses: 'external',
-        model: sequelize.models.poscode
+        model: sequelize.models.poscode,
+        identifiers: {
+          id: 'INTEGER'
+        },
       },
       nonrelated: {
-        model: sequelize.models.nonrelated
+        model: sequelize.models.nonrelated,
+        identifiers: {
+          id: 'INTEGER'
+        },
       }
     });
     let relations = util.inspect(modelRelations(sequelize));

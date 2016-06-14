@@ -1,6 +1,6 @@
 'use strict';
 
-const pathValidator = require('./sequelize/pathValidator');
+const pathValidator = require('./pathValidator');
 const queryValidator = require('./sequelize/urlQueryValidator');
 const modelRelations = require('./sequelize/modelRelations');
 const sequelizeQueryGenerator = require('./sequelize/queryGenerator');

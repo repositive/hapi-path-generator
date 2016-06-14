@@ -1,6 +1,6 @@
 {
   "name": "hapi-path-generator",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A route generator for Hapi",
   "main": "src/index.js",
   "repository": {
@@ -8,7 +8,7 @@
   },
   "scripts": {
     "test": "mocha test/**/*Test.js",
-    "devTest": "mocha -w -c -R nyan -u bdd test/**/*Test.js"
+    "devTest": "mocha -w -c -R nyan -u bdd ./test/ --recursive"
   },
   "author": "Ruben Paz",
   "license": "ISC",

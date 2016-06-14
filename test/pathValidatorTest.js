@@ -3,13 +3,13 @@
 const chai = require('chai');
 const should = chai.should();
 const expect = chai.expect;
-const hapi = require('../serverSetup');
+const hapi = require('./serverSetup');
 const R = require('ramda');
 const util = require('util');
 
 describe('Request Validator', () => {
-  const pathValidator = require('../../src/sequelize/pathValidator');
-  const modelRelations = require('../../src/sequelize/modelRelations');
+  const pathValidator = require('../src/pathValidator');
+  const modelRelations = require('../src/sequelize/modelRelations');
   let relationSchema;
   let server;
   let models;

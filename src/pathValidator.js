@@ -1,7 +1,6 @@
 'use strict';
 
 const R = require('ramda');
-const modelIdentifiers = require('./modelIdentifiers');
 
 /**
  *  Validates if a request is valid or not
@@ -74,21 +73,25 @@ let pathParser = module.exports.pathParser = function pathParser(relationSchema,
 
     let val = arr.pop();
 
+
+
     if(arr.length % 2 === 0) {
       //TODO Check if the relation is possible and if it was queried already
       if(R.isNil(relationSchema[val])) {
+        //TODO Add support for Many2One relations/ Throw error if the relation is not possible or if it's recursive
+
         throw new Error(`The resource ${val} does not exist`);
       }
-      if(acc.length === 0) {
-        acc.unshift({});
+      if(acc.result.length === 0) {
+        acc.result.unshift({});
       }
-      acc[0].table = val;
-      acc[0].model = relationSchema[val].model;
+      acc.result[0].table = val;
+      acc.result[0].model = relationSchema[val].model;
 
-      if(acc[0].identifier) {
+      if(acc.result[0].identifier) {
 
-        let identifiers = modelIdentifiers(acc[0].model);
-        let nId = Number(acc[0].identifier);
+        let identifiers = relationSchema[val].identifiers;
+        let nId = Number(acc.result[0].identifier);
         let idMatch = {};
 
         Object.keys(identifiers).forEach((id) => {
@@ -96,28 +99,28 @@ let pathParser = module.exports.pathParser = function pathParser(relationSchema,
             idMatch[id] = nId;
           }
           else if(identifiers[id] !== 'INTEGER') {
-            idMatch[id] = acc[0].identifier;
+            idMatch[id] = acc.result[0].identifier;
           }
         });
 
         if(Object.keys(idMatch).length > 0) {
-          acc[0].potentialIds = idMatch;
+          acc.result[0].potentialIds = idMatch;
         } else {
-          throw new Error(`The identifier ${acc[0].identifier} is not valid for ${acc[0].model.name}.`);
+          throw new Error(`The identifier ${acc.result[0].identifier} is not valid for ${acc.result[0].model.name}.`);
         }
 
-        delete acc[0].identifier;
+        delete acc.result[0].identifier;
       }
 
     }
     else {
-      acc.unshift({ identifier: val });
+      acc.result.unshift({ identifier: val });
     }
 
     return reducer(acc, arr);
   }
 
 
-  return reducer([], pathArray);
+  return reducer({ result: [], mem: {}}, pathArray).result;
 
 };
