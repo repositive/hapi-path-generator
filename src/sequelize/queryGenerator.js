@@ -10,8 +10,11 @@ const R = require('ramda');
  *  @param {object} params
  *  @returns The generated query
  */
-module.exports = function queryGenerator(parsedPath, urlQuery, query) {
+module.exports = R.curry(function queryGenerator(sequelize, pathHistory, context) {
+  return generator(sequelize, pathHistory, context);
+});
 
+const generator = module.exports.generator = function generator(sequelize, history, context, queryAcc) {
   // Parameters is an object wich can define the following rules.
   // {
   //   attributes: ['', '', ...], //The attributes to query,
@@ -30,30 +33,46 @@ module.exports = function queryGenerator(parsedPath, urlQuery, query) {
   //   order: ''
   // }
 
-  let pathHead = parsedPath.shift();
-
+  let first = history.shift();
+  // throw first;
   let q = {
-    model: pathHead.model
+    model: sequelize.models[first.model]
   };
 
-  if(query) {
-    if(urlQuery.embed && urlQuery.embed[query.model.tableName]) {
-      delete urlQuery.embed[query.model.tableName];
+  if(queryAcc) {
+    //TODO Add embedded objects to the query
+    if(context.query.embed && context.query.embed[queryAcc.model.name]) {
+      delete context.query.embed[queryAcc.model.name];
     }
     else {
-      query.attributes = [];
+      queryAcc.attributes = [];
     }
-    q.include = [query];
+    q.include = [queryAcc];
   }
 
   let where = {};
 
-  if(pathHead.potentialIds) {
-    if(Object.keys(pathHead.potentialIds).length == 1) {
-      where = pathHead.potentialIds;
+  if(context.identifiers && context.identifiers[first.identifier]) {
+    let modelIds = modelIdentifiers(sequelize.models[first.model]);
+    Object.keys(modelIds).forEach((id) => {
+      let _id = context.identifiers[first.identifier];
+      let nIdentifier = Number(_id);
+      if(modelIds[id] == 'INTEGER' && !Number.isNaN(nIdentifier)) {
+        modelIds[id] = nIdentifier;
+      }
+      else if(modelIds[id] != 'INTEGER') {
+        modelIds[id] = _id;
+      }
+      else {
+        delete modelIds[id];
+      }
+    });
+
+    if(Object.keys(modelIds).length == 1) {
+      where = modelIds;
     }
     else {
-      where.$or = pathHead.potentialIds;
+      where.$or = modelIds;
     }
   }
 
@@ -62,28 +81,29 @@ module.exports = function queryGenerator(parsedPath, urlQuery, query) {
     q.where = where;
   }
 
-  if(parsedPath.length === 0) {
+  if(history.length === 0) {
 
-    if(urlQuery.embed && Object.keys(urlQuery.embed).length > 0) {
+    if(context.query.embed && Object.keys(context.query.embed).length > 0) {
       let remainingToEmbed = [];
 
-      Object.keys(urlQuery.embed).forEach((model) => {
+      Object.keys(context.query.embed).forEach((model) => {
         remainingToEmbed.push({
-          model: urlQuery.embed[model]
+          model: sequelize.models[model]
         });
       });
       q.include = R.concat(q.include || [], remainingToEmbed);
     }
 
 
-    delete urlQuery.embed;
-    if(Object.keys(urlQuery).length > 0) {
-      q.where = R.merge(urlQuery, q.where);
+    // delete context.query.embed;
+    if(context.query.attributes) {
+      q.where = R.merge(context.query.attributes, q.where);
     }
+
     return q;
   }
   else {
-    return queryGenerator(parsedPath, urlQuery, q);
+    return generator(sequelize, history, context, q);
   }
 
 };

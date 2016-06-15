@@ -7,7 +7,7 @@ const hapi = require('../serverSetup');
 const R = require('ramda');
 const util = require('util');
 
-describe.skip('sequelizeQueryGenerator', () => {
+describe('sequelizeQueryGenerator', () => {
   const queryGenerator = require('../../src/sequelize/queryGenerator');
   const modelRelations = require('../../src/sequelize/modelRelations');
   let server;
@@ -25,18 +25,18 @@ describe.skip('sequelizeQueryGenerator', () => {
 
   it('should return an object', () => {
     let history = [
-      {type: 'table', table: 'users'}
+      {type: 'table', table: 'users', model: 'user'}
     ];
-    let query = queryGenerator(models, history, {});
+    let query = queryGenerator(sequelize, history, {query:{}});
     should.exist(query);
     query.should.be.a('object');
   });
 
   it('should create query for table scope', () => {
     let history = [
-      {type: 'table', table: 'users'}
+      {type: 'table', table: 'users', model: 'user'}
     ];
-    let query = util.inspect(queryGenerator(models, history, {}));
+    let query = util.inspect(queryGenerator(sequelize, history, {query: {}}));
     query.should.deep.equal(util.inspect(
       { model: sequelize.models.user }
     ));
@@ -44,9 +44,15 @@ describe.skip('sequelizeQueryGenerator', () => {
 
   it('should create query for row scope (non numbers)', () => {
     let history = [
-      {type: 'table', table: 'users'}
+      {type: 'row', table: 'users', model: 'user', identifier: 'user_id'}
     ];
-    let query = util.inspect(queryGenerator(history, {}));
+    let context = {
+      identifiers: {
+        user_id: 's2ln'
+      },
+      query: {}
+    };
+    let query = util.inspect(queryGenerator(sequelize, history, context));
     query.should.deep.equal(util.inspect({
       model: sequelize.models.user,
       where: {
@@ -56,8 +62,16 @@ describe.skip('sequelizeQueryGenerator', () => {
   });
 
   it('should create query for row scope (numbers)', () => {
-    let parsedPath = pathValidator(schema, 'get', '/users/1').parsedPath;
-    let query = util.inspect(queryGenerator(parsedPath, {}));
+    let history = [
+      {type: 'row', table: 'users', model: 'user', identifier: 'user_id'}
+    ];
+    let context = {
+      identifiers: {
+        user_id: '1'
+      },
+      query: {}
+    };
+    let query = util.inspect(queryGenerator(sequelize, history, context));
     query.should.deep.equal(util.inspect({
       model: sequelize.models.user,
       where: {
@@ -70,8 +84,17 @@ describe.skip('sequelizeQueryGenerator', () => {
   });
 
   it('should create query for table though row join', () => {
-    let parsedPath = pathValidator(schema, 'get', '/users/1/addresses').parsedPath;
-    let query = util.inspect(queryGenerator(parsedPath, {}));
+    let history = [
+      {type: 'row', table: 'users', model: 'user', identifier: 'user_id'},
+      {type: 'table', table: 'addresses', model: 'address'}
+    ];
+    let context = {
+      identifiers: {
+        user_id: '1'
+      },
+      query: {}
+    };
+    let query = util.inspect(queryGenerator(sequelize, history, context));
     query.should.deep.equal(util.inspect({
       model: sequelize.models.address,
       include: [
@@ -90,8 +113,19 @@ describe.skip('sequelizeQueryGenerator', () => {
   });
 
   it('should create query for multiple nested tables', () => {
-    let parsedPath = pathValidator(schema, 'get', '/users/1/addresses/3/poscodes').parsedPath;
-    let query = util.inspect(queryGenerator(parsedPath, {}));
+    let history = [
+      {type: 'row', table: 'users', model: 'user', identifier: 'user_id'},
+      {type: 'row', table: 'addresses', model:'address', identifier: 'address_id'},
+      {type: 'row', table: 'poscodes', model: 'poscode'}
+    ];
+    let context = {
+      identifiers: {
+        user_id: '1',
+        address_id: '2'
+      },
+      query: {}
+    };
+    let query = util.inspect(queryGenerator(sequelize, history, context));
     query.should.deep.equal(util.inspect({
       model: sequelize.models.poscode,
       include: [
@@ -118,9 +152,19 @@ describe.skip('sequelizeQueryGenerator', () => {
     }));
   });
 
-  it('should add urlQuery parameters to the mix', () => {
-    let parsedPath = pathValidator(schema, 'get', '/users').parsedPath;
-    let query = util.inspect(queryGenerator(parsedPath, {name: 'Istar'}));
+  it('should add context.query.attributes parameters to the mix', () => {
+    let history = [
+      {type: 'table', table: 'users', model: 'user'}
+    ];
+    let context = {
+      identifiers: {},
+      query: {
+        attributes: {
+          name: 'Istar'
+        }
+      }
+    }
+    let query = util.inspect(queryGenerator(sequelize, history, context));
     query.should.deep.equal(util.inspect({
       model: sequelize.models.user,
       where: {
@@ -129,22 +173,22 @@ describe.skip('sequelizeQueryGenerator', () => {
     }));
   });
 
-  it('should remove embed from the query parameters', () => {
-    let parsedPath = pathValidator(schema, 'get', '/users').parsedPath;
-    let parsedQuery = queryValidator(schema, models.user, {name: 'Istar', embed: []});
-    let query = util.inspect(queryGenerator(parsedPath, parsedQuery));
-    query.should.deep.equal(util.inspect({
-      model: models.user,
-      where: {
-        name: 'Istar'
-      }
-    }));
-  });
-
   it('if embed is present show nested objects', () => {
-    let parsedPath = pathValidator(schema, 'get', '/users/1/addresses').parsedPath;
-    let parsedQuery = queryValidator(schema, models.user, {embed: ['users']});
-    let query = util.inspect(queryGenerator(parsedPath, parsedQuery));
+    let history = [
+      {type: 'row', table: 'users', model: 'user', identifier: 'user_id'},
+      {type: 'table', table: 'address', model: 'address'}
+    ];
+    let context = {
+      identifiers: {
+        user_id: 1
+      },
+      query: {
+        embed: {
+          user: true
+        }
+      }
+    }
+    let query = util.inspect(queryGenerator(sequelize, history, context));
     query.should.deep.equal(util.inspect({
       model: models.address,
       include: [
