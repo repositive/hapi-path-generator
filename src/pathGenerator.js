@@ -18,7 +18,7 @@ const tableGenerator = module.exports.tableGenerator = function tableGenerator(s
   else {
     let useRoot = history.length > 0 ? 'methods' : 'rootMethods';
 
-    history.unshift({
+    history.push({
       type: 'table',
       table: table,
       model: schema[table].model
@@ -45,13 +45,13 @@ const tableGenerator = module.exports.tableGenerator = function tableGenerator(s
 const rowGenerator = module.exports.rowGenerator = function rowGenerator(state, table, schema) {
 
   let history = R.clone(state.history || []);
-  let head = R.head(history);
+  let last = R.last(history);
 
-  let relation = schema[table].relations[head && head.table];
-  let relationType = head && head.type;
+  let relation = schema[table].relations[last && last.table];
+  let relationType = last && last.type;
   let identifier = `${schema[table].model}_id`;
   if(relation) {
-    history.unshift({
+    history.push({
       type: 'row',
       table: table,
       model: schema[table].model

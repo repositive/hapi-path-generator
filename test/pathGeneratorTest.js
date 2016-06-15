@@ -103,7 +103,7 @@ describe('Path Generator', () => {
         history: [{type: 'table', table: 'addresses'}]
       }, 'poscodes', schema);
 
-      let history = result[0].history[0];
+      let history = result[0].history[1];
       should.exist(history && history.table);
       history.table.should.equal('poscodes');
       history.model.should.equal('poscode');
@@ -201,7 +201,7 @@ describe('Path Generator', () => {
         history: [{type: 'table', table: 'addresses'}]
       }, 'poscodes', schema);
 
-      let history = result[0].history[0];
+      let history = result[0].history[1];
       should.exist(history && history.table);
       history.table.should.equal('poscodes');
       history.model.should.equal('poscode');
