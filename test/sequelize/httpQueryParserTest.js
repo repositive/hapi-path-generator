@@ -46,26 +46,26 @@ describe('Query Validator', () => {
       result.attributes.name.should.equal('Istar');
     });
 
-    it('should add limit, offset & sort to pagination', () => {
-      let result = queryParser(schema, models.user, {limit: 10, offset: 10, sort: ['name', 'desc']});
+    it('should add limit, offset & order to pagination', () => {
+      let result = queryParser(schema, models.user, {limit: 10, offset: 10, order: ['name', 'desc']});
       result.should.deep.equal({
         attributes: {},
         pagination: {
           limit: 10,
           offset: 10,
-          sort: ['name', 'desc']
+          order: ['name', 'desc']
         }
       });
     });
 
-    it('if sort is not an array convert it', () => {
-      let result = queryParser(schema, models.user, {limit: 10, offset: 10, sort: 'name'});
+    it('if order is not an array convert it', () => {
+      let result = queryParser(schema, models.user, {limit: 10, offset: 10, order: 'name'});
       result.should.deep.equal({
         attributes: {},
         pagination: {
           limit: 10,
           offset: 10,
-          sort: ['name']
+          order: ['name']
         }
       });
     });

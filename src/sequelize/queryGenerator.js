@@ -94,10 +94,12 @@ const generator = module.exports.generator = function generator(sequelize, histo
       q.include = R.concat(q.include || [], remainingToEmbed);
     }
 
-
-    // delete context.query.embed;
     if(context.query.attributes) {
       q.where = R.merge(context.query.attributes, q.where);
+    }
+
+    if(context.query.pagination) {
+      q = R.merge(context.query.pagination, q);
     }
 
     return q;

@@ -204,4 +204,47 @@ describe('sequelizeQueryGenerator', () => {
       ]
     }));
   });
+
+  it('add limit, offset & sort', () => {
+    let history = [
+      {type: 'row', table: 'users', model: 'user', identifier: 'user_id'},
+      {type: 'table', table: 'address', model: 'address'}
+    ];
+    let context = {
+      identifiers: {
+        user_id: 1
+      },
+      query: {
+        pagination: {
+          limit: 10,
+          offset: 20,
+          order: ['name', 'DESC']
+        },
+        embed: {
+          user: true
+        }
+      }
+    }
+    let query = util.inspect(queryGenerator(sequelize, history, context));
+    // query.limit.should.equal(10);
+    // query.offset.should.equal(20);
+    // query.order.should.equal(['name', 'DESC']);
+    query.should.deep.equal(util.inspect({
+      limit: 10,
+      offset: 20,
+      order: ['name', 'DESC'],
+      model: models.address,
+      include: [
+        {
+          model: models.user,
+          where: {
+            $or: {
+              id: 1,
+              nationalId: '1'
+            }
+          },
+        }
+      ]
+    }));
+  });
 });

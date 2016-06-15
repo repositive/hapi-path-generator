@@ -28,14 +28,14 @@ const urlQueryParser = module.exports.urlQueryParser = function(relationSchema, 
     query.attributes[key] = raw[key];
   });
 
-  let pagination = ['limit', 'offset', 'sort'];
+  let pagination = ['limit', 'offset', 'order'];
 
   pagination.filter((key) => {
     // throw raw[key];
     return !R.isNil(raw[key]);
   })
   .forEach((key) => {
-    if(key == 'sort' && !Array.isArray(raw[key])) {
+    if(key == 'order' && !Array.isArray(raw[key])) {
       raw[key] = [raw[key]];
     }
     query.pagination[key] = raw[key];
