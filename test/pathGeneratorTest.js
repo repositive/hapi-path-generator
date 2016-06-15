@@ -46,8 +46,6 @@ describe('Path Generator', () => {
       result.path.should.be.a('string');
       should.exist(result.method);
       result.method.should.be.a('string');
-      should.exist(result.query);
-      result.query.should.be.a('object');
       should.exist(result.history);
       result.history.should.be.a('array');
     });
@@ -99,6 +97,18 @@ describe('Path Generator', () => {
       result[0].history.length.should.equal(1);
     });
 
+    it('should add the table and model to the history', () => {
+      let result = tableGenerator({
+        path: '/addresses',
+        history: [{type: 'table', table: 'addresses'}]
+      }, 'poscodes', schema);
+
+      let history = result[0].history[0];
+      should.exist(history && history.table);
+      history.table.should.equal('poscodes');
+      history.model.should.equal('poscode');
+    });
+
   });
 
 
@@ -118,8 +128,6 @@ describe('Path Generator', () => {
       result.path.should.be.a('string');
       should.exist(result.method);
       result.method.should.be.a('string');
-      should.exist(result.query);
-      result.query.should.be.a('object');
       should.exist(result.history);
       result.history.should.be.a('array');
     });
@@ -185,6 +193,18 @@ describe('Path Generator', () => {
       }, 'poscodes', schema);
 
       result[0].history.length.should.equal(2);
+    });
+
+    it('should add the table and model to the history', () => {
+      let result = rowGenerator({
+        path: '/addresses',
+        history: [{type: 'table', table: 'addresses'}]
+      }, 'poscodes', schema);
+
+      let history = result[0].history[0];
+      should.exist(history && history.table);
+      history.table.should.equal('poscodes');
+      history.model.should.equal('poscode');
     });
 
 

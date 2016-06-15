@@ -20,7 +20,8 @@ const tableGenerator = module.exports.tableGenerator = function tableGenerator(s
 
     history.unshift({
       type: 'table',
-      table: table
+      table: table,
+      model: schema[table].model
     });
 
     let newPath = `${state.path || ''}/${table}`;
@@ -35,8 +36,7 @@ const tableGenerator = module.exports.tableGenerator = function tableGenerator(s
       return {
         path: newPath,
         method: method,
-        history: history,
-        query: {}
+        history: history
       };
     }), rows);
   }
@@ -49,15 +49,25 @@ const rowGenerator = module.exports.rowGenerator = function rowGenerator(state, 
 
   let relation = schema[table].relations[head && head.table];
   let relationType = head && head.type;
-
+  let identifier = `${schema[table].model}_id`;
   if(relation) {
     history.unshift({
       type: 'row',
-      table: table
+      table: table,
+      model: schema[table].model
     });
   }
+  else {
+    history[0] = {
+      type: 'row',
+      table: table,
+      model: schema[table].model,
+      identifier: identifier
+    };
+  }
 
-  let newPath = relation ? `${state.path}/${schema[table].model}` :  `${state.path}/{${schema[table].model}_id}`;
+
+  let newPath = relation ? `${state.path}/${schema[table].model}` :  `${state.path}/{${identifier}}`;
 
   let newState = {
     path: newPath,
@@ -77,8 +87,7 @@ const rowGenerator = module.exports.rowGenerator = function rowGenerator(state, 
     return {
       path: newPath,
       method: method,
-      history: history,
-      query: {} //TODO Generate the query here
+      history: history
     };
   }), tables);
 };
