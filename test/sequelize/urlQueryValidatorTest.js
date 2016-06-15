@@ -7,7 +7,7 @@ const hapi = require('../serverSetup');
 const R = require('ramda');
 const util = require('util');
 
-describe('urlQueryValidator', () => {
+describe.skip('urlQueryValidator', () => {
   const queryValidator = require('../../src/sequelize/urlQueryValidator');
   const modelRelations = require('../../src/sequelize/modelRelations');
 

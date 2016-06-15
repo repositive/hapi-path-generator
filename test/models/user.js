@@ -13,6 +13,7 @@ module.exports = function(sequelize, Types) {
       classMethods: {
         associate: function(models) {
           models.user.hasMany(models.address);
+          models.user.belongsToMany(models.tag, {through: 'usr_tags'});
         }
       }
     }

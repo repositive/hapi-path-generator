@@ -25,23 +25,27 @@ module.exports = function modelRelationTree(sequelize) {
     if(!globalRelations[model.tableName]) {
       globalRelations[model.tableName] = {};
     }
-    globalRelations[model.tableName].model = model;
+    globalRelations[model.tableName].model = model.name;
     globalRelations[model.tableName].identifiers = modelIdentifiers(model);
 
     let relations = relationExtractor(model);
     let own = {};
 
-    relations.forEach((relation) => { own[relation] = 'own'; });
+    relations.forEach((relation) => {
+      own[relation] = 'one';
+    });
 
-    globalRelations[model.tableName] = R.merge(globalRelations[model.tableName], own);
+    globalRelations[model.tableName].relations = R.merge(globalRelations[model.tableName].relations, own);
 
     relations.forEach((tableName) => {
 
       if(!globalRelations[tableName]) {
-        globalRelations[tableName] = [];
+        globalRelations[tableName] = {
+          relations: {}
+        };
       }
 
-      globalRelations[tableName][model.tableName] = 'external';
+      globalRelations[tableName].relations[model.tableName] = 'many';
 
     });
   });
@@ -63,6 +67,7 @@ let relationExtractor = module.exports.relationExtractor = function(model) {
 
     if(!R.isNil(model.tableAttributes[key].references)) {
       acc.push(model.tableAttributes[key].references.model);
+      // references.model here is the name of the table
     }
 
     return acc;

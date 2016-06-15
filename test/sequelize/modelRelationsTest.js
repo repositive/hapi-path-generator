@@ -43,39 +43,61 @@ describe('Model Relations', () => {
   });
 
   it('should contain a representation of the relations in the db', () => {
-    let example = util.inspect({
+    let example = {
       addresses: {
-        model: sequelize.models.address,
+        model: 'address',
         identifiers: {
           id: 'INTEGER'
         },
-        users: 'own',
-        poscodes: 'own'
+        relations: {
+          users: 'one',
+          poscodes: 'one'
+        }
       },
       users: {
-        addresses: 'external',
-        model: sequelize.models.user,
+        relations: {
+          addresses: 'many',
+          tags: 'many',
+          usr_tags: 'many'
+        },
+        model: 'user',
         identifiers: {
           id: 'INTEGER',
           nationalId: 'STRING'
-        },
+        }
       },
       poscodes: {
-        addresses: 'external',
-        model: sequelize.models.poscode,
+        relations: {
+          addresses: 'many'
+        },
+        model: 'poscode',
         identifiers: {
           id: 'INTEGER'
-        },
+        }
       },
       nonrelated: {
-        model: sequelize.models.nonrelated,
+        model: 'nonrelated',
         identifiers: {
           id: 'INTEGER'
         },
+        relations: {}
+      },
+      tags: {
+        model: 'tag',
+        identifiers: { id: 'INTEGER' },
+        relations: {
+          users: 'one',
+          usr_tags: 'many'
+        }
+      },
+      usr_tags: {
+        model: 'usr_tags',
+        identifiers: { tagId: 'INTEGER', userId: 'INTEGER'},
+        relations: { tags: 'one', users: 'one'}
       }
-    });
+    };
     let relations = util.inspect(modelRelations(sequelize));
-    relations.should.deep.equal(example);
+    relations.should.deep.equal(util.inspect(example));
   });
 
 });
