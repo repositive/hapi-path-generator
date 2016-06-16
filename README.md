@@ -26,35 +26,60 @@ Setting it up
 ------
 ```js
 const Hapi = require('hapi');
-const server = new Hapi.Server();
-const sequelize = require('hapi-sequelize');
-const config = require('./sequelize-config.json');
+const Sequelize = require('sequelize');
+const hapiSeq = require('hapi-sequelize');
 const hapiPath =require('hapi-path-generator');
+const config = require('config');
 
+
+const sequelize = new Sequelize(
+  {
+    database: config.get('db.database'),
+    username: config.get('db.username'),
+    password: config.get('db.password'),
+    port: config.get('db.port'),
+    host: config.get('db.host'),
+    dialect: config.get('db.dialect'),
+  }
+);
+
+const server = new Hapi.Server();
 server.connection({ port: 3000 });
 
-server.register({
-    register: sequelize,
-    options: config.db
-  }, (err) => {
-  if(err) {
-    throw err;
-  }
-
-  server.register(hapiPath, (err) => {
+server.register(
+  {
+    register: hapiSeq,
+    options: {
+      name: config.get('db.database'),
+      sequelize: sequelize,
+      sync: true,
+      models: 'src/models/**/*.js'
+    }
+  },
+  (err) => {
     if(err) {
       throw err;
     }
 
-    const sequelize = server.plugins['hapi-sequelize'].db.sequelize;
+    server.register(
+      {
+        register: hapiPath,
+        options: {
+          sequelize: sequelize // Sequelize should be initialized with the models here
+        }
+      },
+      (err) => {
+        if(err) {
+          throw err;
+        }
 
-    server.start(function (err) {
-      if(err) {
-        throw err;
-      }
-      console.log('server running');
+        server.start(function (err) {
+          if(err) {
+            throw err;
+          }
+          console.log('server running');
+        });
     });
-  });
 });
 
 ```
