@@ -22,8 +22,7 @@
     "shot": "^3.1.0"
   },
   "peerDependencies": {
-    "sequelize": "3.x",
-    "hapi-sequelize": ">= 2.x < 4"
+    "sequelize": "3.x"
   },
   "dependencies": {
     "ramda": "^0.21.0",
