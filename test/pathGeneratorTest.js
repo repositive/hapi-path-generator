@@ -48,6 +48,7 @@ describe('Path Generator', () => {
       result.method.should.be.a('string');
       should.exist(result.history);
       result.history.should.be.a('array');
+      result.history.length.should.equal(1);
     });
 
     it('should concatenate {identifier} to the path', () => {

@@ -11,7 +11,8 @@ const R = require('ramda');
  *  @returns The generated query
  */
 module.exports = R.curry(function queryGenerator(sequelize, pathHistory, context) {
-  return generator(sequelize, pathHistory, context);
+  let history = R.clone(pathHistory);
+  return generator(sequelize, history, context);
 });
 
 const generator = module.exports.generator = function generator(sequelize, history, context, queryAcc) {
@@ -61,7 +62,7 @@ const generator = module.exports.generator = function generator(sequelize, histo
         modelIds[id] = nIdentifier;
       }
       else if(modelIds[id] != 'INTEGER') {
-        modelIds[id] = _id;
+        modelIds[id] = String(_id);
       }
       else {
         delete modelIds[id];
@@ -100,6 +101,10 @@ const generator = module.exports.generator = function generator(sequelize, histo
 
     if(context.query.pagination) {
       q = R.merge(context.query.pagination, q);
+    }
+
+    if(context.method == 'put' || context.method == 'post') {
+      q.returning = true;
     }
 
     return q;

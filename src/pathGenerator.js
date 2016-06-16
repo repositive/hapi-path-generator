@@ -12,7 +12,7 @@ const tableGenerator = module.exports.tableGenerator = function tableGenerator(s
 
   let history = R.clone(state.history || []);
 
-  if(R.contains(table, history.map((entry) => {return entry.table; }))) {
+  if((state.path || '').indexOf(table) != -1) {
     return [];
   }
   else {

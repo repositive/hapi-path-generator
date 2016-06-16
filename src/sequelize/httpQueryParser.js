@@ -1,9 +1,9 @@
 
 const R = require('ramda');
 
-module.exports = function(relationSchema, model, query) {
+module.exports = R.curry(function(relationSchema, model, query) {
   return urlQueryParser(relationSchema, model, query);
-};
+});
 
 const urlQueryParser = module.exports.urlQueryParser = function(relationSchema, model, raw) {
   let query = {

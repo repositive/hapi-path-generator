@@ -7,7 +7,7 @@
     "type": "private"
   },
   "scripts": {
-    "test": "mocha test/**/*Test.js",
+    "test": "mocha ./test/ --recursive",
     "devTest": "mocha -w -c -R nyan -u bdd ./test/ --recursive"
   },
   "author": "Ruben Paz",
@@ -18,7 +18,8 @@
     "hapi-sequelize": "^2.2.4",
     "mocha": "^2.5.3",
     "pg": "^5.0.0",
-    "sequelize": "^3.23.3"
+    "sequelize": "^3.23.3",
+    "shot": "^3.1.0"
   },
   "peerDependencies": {
     "sequelize": "3.x",

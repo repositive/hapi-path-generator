@@ -65,9 +65,6 @@ The project assumes that you will be using hapi with sequelize.
 
 `"sequelize": "3.x"`
 
-`"hapi-sequelize": ">= 2.x < 4"`
-
-
 
 Contributing.
 ------
