@@ -7,7 +7,7 @@ const hapi = require('./serverSetup');
 const R = require('ramda');
 const util = require('util');
 
-describe('Path Generator', () => {
+describe('Integration', () => {
   const pathGenerator = require('../src');
   let server;
   let sequelize;
@@ -36,7 +36,8 @@ describe('Path Generator', () => {
               reject(err);
             }
             else {
-              resolve();
+              return sequelize.sync()
+              .then(resolve);
             }
           }
         );
