@@ -5,10 +5,12 @@ const Boom = require('boom');
 const paths = require('./sequelize/sequelizePaths');
 
 const hapiRouteGenerator = {
-  register: function(server, options) {
+  register: function(server, options, done) {
     let sequelize = options.sequelize;
     if(sequelize) {
-      paths(sequelize).forEach((route) => {
+      let generatedPaths = paths(sequelize);
+      let parsedPaths = generatedPaths.map((route) => {
+
         server.route({
           path: route.path,
           method: route.method,
@@ -27,14 +29,28 @@ const hapiRouteGenerator = {
               .catch((err) => {
                 rep(err);
               });
-            },
-            id: getId(route)
+            }
           }
-
         });
-      });
-    }
 
+        return {
+          method: route.method,
+          path: route.path
+        };
+      });
+
+      server.route({
+        path: '/routes',
+        method: 'get',
+        config: {
+          handler: function(req, rep) {
+            rep(parsedPaths);
+          }
+        }
+      });
+
+      done();
+    }
     else {
       throw Error('You should pass an instance of sequelizer as parameter');
     }
@@ -46,12 +62,5 @@ hapiRouteGenerator.register.attributes = {
   pkg: require('../package.json')
 };
 
-function getId(route) {
-  let code = route.history.reduce((acc, val, i) => {
-    return acc === '' ? val.table : `${acc}.${val.table}`;
-    },
-    `${route.method}:${route.history[route.history.length -1].type}`
-  );
-}
 
 module.exports = hapiRouteGenerator;
