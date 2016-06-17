@@ -1,6 +1,6 @@
 {
   "name": "hapi-path-generator",
-  "version": "0.0.6",
+  "version": "0.0.8",
   "description": "A route generator for Hapi",
   "main": "src/index.js",
   "repository": {

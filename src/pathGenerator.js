@@ -26,6 +26,7 @@ const tableGenerator = module.exports.tableGenerator = function tableGenerator(s
 
     let newPath = `${state.path || ''}/${table}`;
     let newState = {
+      limit: state.limit,
       path: newPath,
       history: history
     };
@@ -70,6 +71,7 @@ const rowGenerator = module.exports.rowGenerator = function rowGenerator(state, 
   let newPath = relation ? `${state.path}/${schema[table].model}` :  `${state.path}/{${identifier}}`;
 
   let newState = {
+    limit: state.limit,
     path: newPath,
     history: history
   };
