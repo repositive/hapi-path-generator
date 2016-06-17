@@ -4,6 +4,8 @@ Hapi Path Generator
 
 https://codeship.com/projects/158394/status?branch=develop
 
+https://travis-ci.org/repositive/hapi-path-generator.svg?branch=develop
+
 How it works
 ------
 The project generates routes and the crud operations based on sequelize models.
