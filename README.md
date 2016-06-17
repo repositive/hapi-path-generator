@@ -1,10 +1,8 @@
-[![Stories in Ready](https://badge.waffle.io/repositive/hapi-path-generator.png?label=ready&title=Ready)](https://waffle.io/repositive/hapi-path-generator)
+[![Stories in Ready](https://badge.waffle.io/repositive/hapi-path-generator.png?label=ready&title=Ready)](https://waffle.io/repositive/hapi-path-generator) [![Travis](https://travis-ci.org/repositive/hapi-path-generator.svg?branch=develop)](https://travis-ci.org/repositive/hapi-path-generator)
+
 Hapi Path Generator
 ---
 
-https://codeship.com/projects/158394/status?branch=develop
-
-https://travis-ci.org/repositive/hapi-path-generator.svg?branch=develop
 
 How it works
 ------
