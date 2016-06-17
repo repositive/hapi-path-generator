@@ -5,6 +5,7 @@
     "database": "testing",
     "user": "postgres",
     "pass": "postgres",
-    "dialect": "postgres"
+    "dialect": "postgres",
+    "logging": false
     }
 }

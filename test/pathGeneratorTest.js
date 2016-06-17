@@ -25,9 +25,14 @@ describe('Path Generator', () => {
   });
 
   it('should return an array', () => {
-    let result = pathGenerator(schema);
+    let result = pathGenerator(schema, {relationLimit: 3});
     should.exist(result);
     result.should.be.a('array');
+  });
+
+  it('should limit the relations', () => {
+    let result = pathGenerator(schema, {relationLimit: 0});
+    result.length.should.equal(0);
   });
 
   describe('table generator', () => {

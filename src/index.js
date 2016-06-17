@@ -7,9 +7,20 @@ const paths = require('./sequelize/sequelizePaths');
 const hapiRouteGenerator = {
   register: function(server, options, done) {
     let sequelize = options.sequelize;
+
+    // Set the default relation limit to three.
+    options.relationLimit = options.relationLimit || 3;
+
     if(sequelize) {
-      let generatedPaths = paths(sequelize);
+      let generatedPaths = paths(sequelize, options);
+
+      // Used to convert the path into an id
+      let matchBars = new RegExp("[\/]", "g");
+
       let parsedPaths = generatedPaths.map((route) => {
+
+
+        let routeId = `${route.method}${route.path.replace(matchBars, '.')}`;
 
         server.route({
           path: route.path,
@@ -29,7 +40,8 @@ const hapiRouteGenerator = {
               .catch((err) => {
                 rep(err);
               });
-            }
+            },
+            id: routeId
           }
         });
 

@@ -24,7 +24,7 @@ describe('Create', () => {
       server = srv;
       sequelize = server.plugins['hapi-sequelize'].db.sequelize;
       return sequelize.sync().then(() => {
-        paths = hapiPaths(sequelize);
+        paths = hapiPaths(sequelize, {relationLimit: 3});
       });
 
     });

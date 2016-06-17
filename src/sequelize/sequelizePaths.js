@@ -8,10 +8,11 @@ const sequelizeQueryGenerator = require('./queryGenerator');
 
 const pathGenerator = require('../pathGenerator');
 
-module.exports = function paths(sequelize) {
+module.exports = function paths(sequelize, options) {
+
   let schema = sequelizeSchema(sequelize);
 
-  return pathGenerator(schema).map((route) => {
+  return pathGenerator(schema, options).map((route) => {
     let state = R.clone(route.history[route.history.length - 1]);
     let model = sequelize.models[state.model];
 

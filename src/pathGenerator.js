@@ -2,9 +2,9 @@
 
 const R = require('ramda');
 
-module.exports = function pathGenerator(modelRelations) {
+module.exports = function pathGenerator(modelRelations, options) {
   return R.flatten(Object.keys(modelRelations).map((model) => {
-    return tableGenerator({}, model, modelRelations);
+    return tableGenerator({ limit: options.relationLimit }, model, modelRelations);
   }));
 };
 
@@ -12,7 +12,7 @@ const tableGenerator = module.exports.tableGenerator = function tableGenerator(s
 
   let history = R.clone(state.history || []);
 
-  if((state.path || '').indexOf(table) != -1) {
+  if(history.length >= state.limit || (state.path || '').indexOf(table) != -1) {
     return [];
   }
   else {
