@@ -2,19 +2,16 @@
 
 
 function setup {
-  docker-compose up -d --no-recreate
-  docker-compose start
-  docker-compose run node npm install --no-recreate
+  docker-compose -f docker-compose.yml up -d --no-recreate
 }
 
 function test {
-  if [ "$1" = "dev" ]
+  if [ "$1" = "ci" ]
   then
-    COMMAND="devTest"
+    docker exec hapipathgenerator_node_1 npm run testCI
   else
-    COMMAND="test"
+    docker exec hapipathgenerator_node_1 npm run test
   fi
-  docker-compose run node npm run "$COMMAND" --no-recreate
 }
 
 function clean {
@@ -27,18 +24,15 @@ case "$1" in
       clean
       exit 0
     ;;
+    setup)
+      setup
+    ;;
     test)
       setup
       test $2
-      clean
-      exit 0
-    ;;
-    setup)
-      setup
-      exit 0
     ;;
     *)
-      echo $"Usage: $0 {clean|test}"
+      echo $"Usage: $0 {clean|start}"
       exit 1
     ;;
 esac

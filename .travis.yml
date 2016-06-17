@@ -1,0 +1,11 @@
+sudo: required
+
+services:
+  - docker
+
+before_install:
+  - chmod +x project.sh
+  - ./project.sh setup
+
+script::
+  - ./project.sh test ci

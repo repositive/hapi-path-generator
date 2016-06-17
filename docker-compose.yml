@@ -2,7 +2,7 @@ version: '2'
 services:
   node:
     image: mhart/alpine-node
-    command: node
+    command: sleep 60
     working_dir: /opt
     expose:
       - "3000"

@@ -2,6 +2,7 @@
 Hapi Path Generator
 ---
 
+https://codeship.com/projects/158394/status?branch=develop
 
 How it works
 ------

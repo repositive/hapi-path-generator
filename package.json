@@ -7,8 +7,8 @@
     "type": "private"
   },
   "scripts": {
-    "test": "mocha ./test/ --recursive",
-    "devTest": "mocha -w -c -R nyan -u bdd ./test/ --recursive"
+    "testCI": "npm install && mocha ./test/ --recursive",
+    "test": "npm install && mocha -w -c -R nyan -u bdd ./test/ --recursive"
   },
   "author": "Ruben Paz",
   "license": "ISC",
