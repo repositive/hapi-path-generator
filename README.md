@@ -1,4 +1,6 @@
-[![Stories in Ready](https://badge.waffle.io/repositive/hapi-path-generator.png?label=ready&title=Ready)](https://waffle.io/repositive/hapi-path-generator) [![Travis](https://travis-ci.org/repositive/hapi-path-generator.svg?branch=develop)](https://travis-ci.org/repositive/hapi-path-generator)
+[![Stories in Ready](https://badge.waffle.io/repositive/hapi-path-generator.png?label=ready&title=Ready)](https://waffle.io/repositive/hapi-path-generator)
+![Build Status](https://travis-ci.org/repositive/hapi-path-generator.png?branch=master
+)
 
 Hapi Path Generator
 ---
