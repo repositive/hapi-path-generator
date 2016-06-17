@@ -2,7 +2,7 @@ version: '2'
 services:
   node:
     image: mhart/alpine-node
-    command: sleep 60
+    command: /bin/sh -c "while true; do echo hello world; sleep 1; done"
     working_dir: /opt
     volumes:
      - .:/opt
