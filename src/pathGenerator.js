@@ -46,6 +46,11 @@ const tableGenerator = module.exports.tableGenerator = function tableGenerator(s
 const rowGenerator = module.exports.rowGenerator = function rowGenerator(state, table, schema) {
 
   let history = R.clone(state.history || []);
+
+  if(history.length >= state.limit){
+    return [];
+  }
+
   let last = R.last(history);
 
   let relation = schema[table].relations[last && last.table];
