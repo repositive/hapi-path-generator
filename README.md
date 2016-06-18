@@ -1,5 +1,5 @@
 [![Stories in Ready](https://badge.waffle.io/repositive/hapi-path-generator.png?label=ready&title=Ready)](https://waffle.io/repositive/hapi-path-generator)
-![Build Status](https://travis-ci.org/repositive/hapi-path-generator.png?branch=master
+![Build Status](https://travis-ci.org/repositive/hapi-path-generator.png?branch=develop
 )
 
 Hapi Path Generator
