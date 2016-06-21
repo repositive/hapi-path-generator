@@ -25,7 +25,8 @@ describe('Create', () => {
       sequelize = server.plugins['hapi-sequelize'].db.sequelize;
       let defaultOptions = {
         relationLimit: 3,
-        prefix: ''
+        prefix: '',
+        idFormat: 'curly'
       };
       return sequelize.sync().then(() => {
         paths = hapiPaths(sequelize, defaultOptions);

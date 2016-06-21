@@ -17,7 +17,8 @@ describe('Path Generator', () => {
 
   let defaultOptions = {
     relationLimit: 3,
-    prefix: ''
+    prefix: '',
+    idFormat: 'curly'
   };
 
   before(() => {
@@ -67,10 +68,22 @@ describe('Path Generator', () => {
       result.path.should.equal('/users');
     });
 
+    it('should generate routes with colon ids', () => {
+      let result = tableGenerator({options: {
+        relationLimit: 3,
+        prefix: '',
+        idFormat: 'colons'
+      }}, 'addresses', schema);
+
+      let paths = result.map((route) => {return route.path; });
+      paths.should.contain('/addresses/:address_id/poscode');
+    });
+
     it('it append prefix if present in the options', () => {
       let options = {
         relationLimit: 3,
-        prefix: '/api'
+        prefix: '/api',
+        idFormat: 'curly'
       };
       let result = tableGenerator({options: options}, 'users', schema)[0];
 
@@ -256,6 +269,8 @@ describe('Path Generator', () => {
       let paths = result.map((route) => {return route.path; });
       paths.should.contain('/addresses/{address_id}/poscode');
     });
+
+
 
   });
 

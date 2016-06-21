@@ -71,8 +71,9 @@ const rowGenerator = module.exports.rowGenerator = function rowGenerator(state, 
     };
   }
 
+  let identifierString = state.options.idFormat == 'colons' ? `:${identifier}` : `{${identifier}}`;
 
-  let newPath = relation ? `${state.path}/${schema[table].model}` :  `${state.path}/{${identifier}}`;
+  let newPath = relation ? `${state.path}/${schema[table].model}` :  `${state.path}/${identifierString}`;
 
   let newState = {
     options: state.options,
