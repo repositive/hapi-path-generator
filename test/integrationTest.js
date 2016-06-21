@@ -28,7 +28,10 @@ describe('Integration', () => {
           {
             register: pathGenerator,
             options: {
-              sequelize: sequelize
+              sequelize: sequelize,
+              config: {
+                tags: ['test']
+              }
             }
           },
           (err) => {
@@ -155,5 +158,10 @@ describe('Integration', () => {
       should.exist(route.path);
       should.exist(route.method);
     });
+  });
+
+  it('should contains custom tags when config modified',() => {
+    let route = server.lookup('get.users');
+    route.settings.tags.should.contain('test');
   });
 });

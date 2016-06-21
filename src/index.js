@@ -4,6 +4,18 @@ const R = require('ramda');
 const Boom = require('boom');
 const paths = require('./sequelize/sequelizePaths');
 
+function deepMerge(v1, v2) {
+  if(Array.isArray(v1) && Array.isArray(v2)) {
+    return R.uniq(R.concat(v1, v2));
+  }
+  else if(typeof v1 === 'object' && typeof v2 === 'object'){
+    return R.mergeWith(deepMerge, v1, v2);
+  }
+  else {
+    return v2;
+  }
+}
+
 const hapiRouteGenerator = {
   register: function(server, options, done) {
     let sequelize = options.sequelize;
@@ -46,7 +58,7 @@ const hapiRouteGenerator = {
         server.route({
           path: route.path,
           method: route.method,
-          config: {
+          config: R.mergeWith(deepMerge, options.config, {
             handler: function(req, rep) {
               let context = {
                 query: req.query,
@@ -63,7 +75,7 @@ const hapiRouteGenerator = {
               });
             },
             id: routeId
-          }
+          })
         });
 
         return {
