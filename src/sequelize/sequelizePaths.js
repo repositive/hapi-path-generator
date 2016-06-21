@@ -24,12 +24,19 @@ module.exports = function paths(sequelize, options) {
       context.query = queryParser(context.query || {});
       context.method = route.method;
 
+      if(route.method == 'get') {
+        context.query.limit = context.query.limit || options.defaultLimit;
+        if(context.query.limit > options.maxItems) {
+          context.query.limit = options.maxItems;
+        }
+      }
 
       let query = queryGenerator(context);
 
       let f = sequelize.models[state.model][methodMap[state.type][route.method]];
 
       let fParams = [query];
+
       if(R.contains(route.method, ['put', 'post', 'update'])) {
         fParams.unshift(context.payload);
       }
