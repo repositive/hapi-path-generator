@@ -15,6 +15,11 @@ describe('Path Generator', () => {
   let models;
   let schema;
 
+  let defaultOptions = {
+    relationLimit: 3,
+    prefix: ''
+  };
+
   before(() => {
     return hapi.then((srv) => {
       server = srv;
@@ -25,13 +30,13 @@ describe('Path Generator', () => {
   });
 
   it('should return an array', () => {
-    let result = pathGenerator(schema, {relationLimit: 3});
+    let result = pathGenerator(schema, defaultOptions);
     should.exist(result);
     result.should.be.a('array');
   });
 
   it('should limit the relations', () => {
-    let result = pathGenerator(schema, {relationLimit: 0});
+    let result = pathGenerator(schema, {relationLimit: 0, prefix: ''});
     result.length.should.equal(0);
   });
 
@@ -39,13 +44,13 @@ describe('Path Generator', () => {
     const tableGenerator = pathGenerator.tableGenerator;
 
     it('should return an array', () => {
-      let result = tableGenerator({}, 'users', schema);
+      let result = tableGenerator({options: defaultOptions}, 'users', schema);
       should.exist(result);
       result.should.be.a('array');
     });
 
     it('routes should contain path, method and query', () => {
-      let result = tableGenerator({}, 'users', schema)[0];
+      let result = tableGenerator({options: defaultOptions}, 'users', schema)[0];
 
       should.exist(result.path);
       result.path.should.be.a('string');
@@ -57,14 +62,25 @@ describe('Path Generator', () => {
     });
 
     it('should concatenate {identifier} to the path', () => {
-      let result = tableGenerator({}, 'users', schema)[0];
+      let result = tableGenerator({options: defaultOptions}, 'users', schema)[0];
 
       result.path.should.equal('/users');
+    });
+
+    it('it append prefix if present in the options', () => {
+      let options = {
+        relationLimit: 3,
+        prefix: '/api'
+      };
+      let result = tableGenerator({options: options}, 'users', schema)[0];
+
+      result.path.should.equal('/api/users');
     });
 
     it('should generate routes for get put & delete', () => {
       let result = tableGenerator({
         history: [],
+        options: defaultOptions
       }, 'users', schema);
 
       let methods = result.map((route) => {return route.method; });
@@ -75,7 +91,7 @@ describe('Path Generator', () => {
     });
 
     it('should generate routes for the child rows', () => {
-      let result = tableGenerator({}, 'users', schema);
+      let result = tableGenerator({options: defaultOptions}, 'users', schema);
 
       let paths = result.map((route) => {return route.path; });
 
@@ -83,7 +99,7 @@ describe('Path Generator', () => {
     });
 
     it('If the table exist in the history do not generate paths', () => {
-      let state = {path: '/users/3', history: [
+      let state = { options: defaultOptions,path: '/users/3', history: [
         {
           type: 'row',
           table: 'users'
@@ -98,13 +114,14 @@ describe('Path Generator', () => {
     });
 
     it('should increase the history', () => {
-      let result = tableGenerator({}, 'users', schema);
+      let result = tableGenerator({options: defaultOptions}, 'users', schema);
 
       result[0].history.length.should.equal(1);
     });
 
     it('should add the table and model to the history', () => {
       let result = tableGenerator({
+        options: defaultOptions,
         path: '/addresses',
         history: [{type: 'table', table: 'addresses'}]
       }, 'poscodes', schema);
@@ -122,13 +139,13 @@ describe('Path Generator', () => {
     const rowGenerator = pathGenerator.rowGenerator;
 
     it('should return an array', () => {
-      let result = rowGenerator('', 'users', schema);
+      let result = rowGenerator({options: defaultOptions,options: defaultOptions}, 'users', schema);
       should.exist(result);
       result.should.be.a('array');
     });
 
     it('routes should contain path, method and query', () => {
-      let result = rowGenerator('', 'users', schema)[0];
+      let result = rowGenerator({options: defaultOptions,options: defaultOptions}, 'users', schema)[0];
 
       should.exist(result.path);
       result.path.should.be.a('string');
@@ -139,7 +156,7 @@ describe('Path Generator', () => {
     });
 
     it('should concatenate {identifier} to the path', () => {
-      let state = {
+      let state = { options: defaultOptions,
         path: '/users',
         history: [{
           type: 'table',
@@ -152,7 +169,7 @@ describe('Path Generator', () => {
     });
 
     it('should concatenate the singular name to path if the resource is many related', () => {
-      let state = {
+      let state = { options: defaultOptions,
         history: [
           {table: 'addresses', type: 'row'},
           {table: 'addresses', type: 'table'}
@@ -167,7 +184,7 @@ describe('Path Generator', () => {
     });
 
     it('should generate routes for get put & delete', () => {
-      let state = {
+      let state = { options: defaultOptions,
         path: '/users',
         history: [{
           table: 'users',
@@ -184,7 +201,7 @@ describe('Path Generator', () => {
     });
 
     it('dont increase the history if the table is the same', () => {
-      let result = rowGenerator({
+      let result = rowGenerator({options: defaultOptions,
         path: '/users',
         history: [{type: 'table', table: 'users'}]
       }, 'users', schema);
@@ -193,7 +210,7 @@ describe('Path Generator', () => {
     });
 
     it('should increase the history when relations', () => {
-      let result = rowGenerator({
+      let result = rowGenerator({options: defaultOptions,
         path: '/addresses',
         history: [{type: 'table', table: 'addresses'}]
       }, 'poscodes', schema);
@@ -202,7 +219,7 @@ describe('Path Generator', () => {
     });
 
     it('should add the table and model to the history', () => {
-      let result = rowGenerator({
+      let result = rowGenerator({options: defaultOptions,
         path: '/addresses',
         history: [{type: 'table', table: 'addresses'}]
       }, 'poscodes', schema);
@@ -215,7 +232,7 @@ describe('Path Generator', () => {
 
 
     it('should generate routes for the related tables', () => {
-      let state = {
+      let state = { options: defaultOptions,
         path: '/users',
         history: [
           {type: 'table', table: 'users'}
@@ -229,7 +246,7 @@ describe('Path Generator', () => {
     });
 
     it('should generate routes for the related tables when relation one to many', () => {
-      let result = rowGenerator({
+      let result = rowGenerator({options: defaultOptions,
         path: '/addresses',
         history: [
           {type: 'table', table: 'addresses'}

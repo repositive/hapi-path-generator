@@ -4,7 +4,7 @@ const R = require('ramda');
 
 module.exports = function pathGenerator(modelRelations, options) {
   return R.flatten(Object.keys(modelRelations).map((model) => {
-    return tableGenerator({ limit: options.relationLimit }, model, modelRelations);
+    return tableGenerator({ options: options }, model, modelRelations);
   }));
 };
 
@@ -12,7 +12,7 @@ const tableGenerator = module.exports.tableGenerator = function tableGenerator(s
 
   let history = R.clone(state.history || []);
 
-  if(history.length >= state.limit || (state.path || '').indexOf(table) != -1) {
+  if(history.length >= state.options.relationLimit || (state.path || '').indexOf(table) != -1) {
     return [];
   }
   else {
@@ -23,10 +23,9 @@ const tableGenerator = module.exports.tableGenerator = function tableGenerator(s
       table: table,
       model: schema[table].model
     });
-
-    let newPath = `${state.path || ''}/${table}`;
+    let newPath = `${state.path || state.options.prefix}/${table}`;
     let newState = {
-      limit: state.limit,
+      options: state.options,
       path: newPath,
       history: history
     };
@@ -47,7 +46,7 @@ const rowGenerator = module.exports.rowGenerator = function rowGenerator(state, 
 
   let history = R.clone(state.history || []);
 
-  if(history.length >= state.limit){
+  if(history.length >= state.options.relationLimit){
     return [];
   }
 
@@ -76,7 +75,7 @@ const rowGenerator = module.exports.rowGenerator = function rowGenerator(state, 
   let newPath = relation ? `${state.path}/${schema[table].model}` :  `${state.path}/{${identifier}}`;
 
   let newState = {
-    limit: state.limit,
+    options: state.options,
     path: newPath,
     history: history
   };

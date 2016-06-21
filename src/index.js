@@ -8,8 +8,29 @@ const hapiRouteGenerator = {
   register: function(server, options, done) {
     let sequelize = options.sequelize;
 
-    // Set the default relation limit to three.
+    // Set the default relation limit to three if it is 0 ignore it.
     options.relationLimit = options.relationLimit || 3;
+
+    // Set a prefix to all the enpoints generated
+    options.prefix = options.prefix || '';
+
+    // This object is added as configuration to all the endpoints
+    options.config = options.config || {};
+
+    // Allow the user to change the format of the ids in the path
+    // Valid options:
+    // curly {identifier}
+    // colons :identifier
+    options.idFormat = options.idFormat || 'curly';
+
+    // Sets the maximun ammount of items a user can get from get queries.
+    // If the limit in the query is forced by the user the api return as max this number of items
+    // If the user sets 0 ignores it
+    options.maxItems = options.maxItems || 100;
+
+    // Default limit for getTable queries
+    // If the user sets 0 ignores it
+    options.limit = options.limit || 10;
 
     if(sequelize) {
       let generatedPaths = paths(sequelize, options);

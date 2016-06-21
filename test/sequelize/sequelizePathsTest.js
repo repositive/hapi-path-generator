@@ -23,8 +23,12 @@ describe('Create', () => {
     return hapi.then((srv) => {
       server = srv;
       sequelize = server.plugins['hapi-sequelize'].db.sequelize;
+      let defaultOptions = {
+        relationLimit: 3,
+        prefix: ''
+      };
       return sequelize.sync().then(() => {
-        paths = hapiPaths(sequelize, {relationLimit: 3});
+        paths = hapiPaths(sequelize, defaultOptions);
       });
 
     });
