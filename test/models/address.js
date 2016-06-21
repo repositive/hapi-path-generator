@@ -3,7 +3,11 @@ module.exports = function(sequelize, Types) {
   return sequelize.define('address',
     {
       line1: Types.STRING,
-      line2: Types.STRING
+      line2: Types.STRING,
+      anotherUnique: {
+        type: Types.UUID,
+        unique: true
+      }
     },
     {
       classMethods: {

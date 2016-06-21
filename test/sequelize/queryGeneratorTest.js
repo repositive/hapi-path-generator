@@ -61,6 +61,25 @@ describe('sequelizeQueryGenerator', () => {
     }));
   });
 
+  it('should create query for row scope (uuid)', () => {
+    let history = [
+      {type: 'row', table: 'addresses', model: 'address', identifier: 'address_id'}
+    ];
+    let context = {
+      identifiers: {
+        address_id: '92d35977-e252-473e-ac40-b0c33c234b37'
+      },
+      query: {}
+    };
+    let query = util.inspect(queryGenerator(sequelize, history, context));
+    query.should.deep.equal(util.inspect({
+      model: sequelize.models.address,
+      where: {
+        anotherUnique: "92d35977-e252-473e-ac40-b0c33c234b37"
+      }
+    }));
+  });
+
   it('should create query for row scope (numbers)', () => {
     let history = [
       {type: 'row', table: 'users', model: 'user', identifier: 'user_id'}

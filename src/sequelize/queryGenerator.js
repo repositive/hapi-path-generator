@@ -2,6 +2,7 @@
 
 
 const modelIdentifiers = require('./modelIdentifiers');
+const validator = require('validator');
 const R = require('ramda');
 
 /**
@@ -57,11 +58,13 @@ const generator = module.exports.generator = function generator(sequelize, histo
     let modelIds = modelIdentifiers(sequelize.models[first.model]);
     Object.keys(modelIds).forEach((id) => {
       let _id = context.identifiers[first.identifier];
-      let nIdentifier = Number(_id);
-      if(modelIds[id] == 'INTEGER' && !Number.isNaN(nIdentifier)) {
-        modelIds[id] = nIdentifier;
+      if(modelIds[id] == 'INTEGER' && validator.isInt(String(_id))) {
+        modelIds[id] = Number(_id);
       }
-      else if(modelIds[id] != 'INTEGER') {
+      else if(modelIds[id] == 'UUID' && validator.isUUID(String(_id))) {
+        modelIds[id] = _id;
+      }
+      else if(modelIds[id] != 'INTEGER' && modelIds[id] != 'UUID') {
         modelIds[id] = String(_id);
       }
       else {

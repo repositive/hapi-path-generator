@@ -47,7 +47,8 @@ describe('Model Relations', () => {
       addresses: {
         model: 'address',
         identifiers: {
-          id: 'INTEGER'
+          id: 'INTEGER',
+          anotherUnique: 'UUID'
         },
         relations: {
           users: 'one',

@@ -26,6 +26,6 @@
   },
   "dependencies": {
     "ramda": "^0.21.0",
-    "subtext": "^4.0.4"
+    "validator": "^5.4.0"
   }
 }
