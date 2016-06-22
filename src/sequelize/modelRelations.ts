@@ -1,6 +1,7 @@
-'use strict';
-const R = require('ramda');
-const modelIdentifiers = require('./modelIdentifiers');
+
+import * as R from "ramda";
+
+const modelIdentifiers = require("./modelIdentifiers");
 
 /**
  *  Creates a representation of the relations between the models
@@ -22,7 +23,7 @@ module.exports = function modelRelationTree(sequelize) {
 
     let model = sequelize.models[modelName];
 
-    if(!globalRelations[model.tableName]) {
+    if (!globalRelations[model.tableName]) {
       globalRelations[model.tableName] = {};
     }
     globalRelations[model.tableName].model = model.name;
@@ -32,20 +33,20 @@ module.exports = function modelRelationTree(sequelize) {
     let own = {};
 
     relations.forEach((relation) => {
-      own[relation] = 'one';
+      own[relation] = "one";
     });
 
     globalRelations[model.tableName].relations = R.merge(globalRelations[model.tableName].relations, own);
 
     relations.forEach((tableName) => {
 
-      if(!globalRelations[tableName]) {
+      if (!globalRelations[tableName]) {
         globalRelations[tableName] = {
           relations: {}
         };
       }
 
-      globalRelations[tableName].relations[model.tableName] = 'many';
+      globalRelations[tableName].relations[model.tableName] = "many";
 
     });
   });
@@ -65,7 +66,7 @@ let relationExtractor = module.exports.relationExtractor = function(model) {
 
   function modelReducer(acc, key) {
 
-    if(!R.isNil(model.tableAttributes[key].references)) {
+    if (!R.isNil(model.tableAttributes[key].references)) {
       acc.push(model.tableAttributes[key].references.model);
       // references.model here is the name of the table
     }

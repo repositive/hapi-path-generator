@@ -8,7 +8,7 @@ const R = require('ramda');
 const util = require('util');
 
 describe('Model Relations', () => {
-  const modelRelations = require('../../src/sequelize/modelRelations');
+  const modelRelations = require('../../dist/sequelize/modelRelations');
   let server;
   let models;
   let sequelize;

@@ -1,13 +1,15 @@
 version: '2'
 services:
   node:
-    image: mhart/alpine-node
+    image: node
     command: /bin/sh -c "while true; do echo hello world; sleep 1; done"
     working_dir: /opt
     volumes:
      - .:/opt
     depends_on:
      - postgres
+    environment:
+      CODACY_PROJECT_TOKEN: "{{CODACY_PROJECT_TOKEN}}"
   postgres:
     image: postgres
     environment:

@@ -8,8 +8,8 @@ const R = require('ramda');
 const util = require('util');
 
 describe('sequelizeQueryGenerator', () => {
-  const queryGenerator = require('../../src/sequelize/queryGenerator');
-  const modelRelations = require('../../src/sequelize/modelRelations');
+  const queryGenerator = require('../../dist/sequelize/queryGenerator');
+  const modelRelations = require('../../dist/sequelize/modelRelations');
   let server;
   let models;
   let sequelize;

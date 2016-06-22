@@ -8,7 +8,7 @@ const R = require('ramda');
 const util = require('util');
 
 describe('Integration', () => {
-  const pathGenerator = require('../src');
+  const pathGenerator = require('../dist');
   let server;
   let sequelize;
   let inject;

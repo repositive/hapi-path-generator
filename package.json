@@ -2,13 +2,15 @@
   "name": "hapi-path-generator",
   "version": "0.0.11",
   "description": "A route generator for Hapi",
-  "main": "src/index.js",
+  "main": "dist/index.js",
   "repository": {
     "type": "private"
   },
   "scripts": {
-    "testCI": "npm install && mocha ./test/ --recursive",
-    "test": "npm install && mocha -w -c -R nyan -u bdd ./test/ --recursive"
+    "compile": "tsc",
+    "testCI": "npm install && tsc && mocha ./test/ --recursive",
+    "test": "npm install && mocha -w -c -R nyan -u bdd ./test/ --recursive",
+    "cov": "istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec ./test/ --recursive && cat ./coverage/lcov.info | ./node_modules/.bin/codacy-coverage"
   },
   "author": "Ruben Paz",
   "license": "ISC",
@@ -19,12 +21,14 @@
     "mocha": "^2.5.3",
     "pg": "^5.0.0",
     "sequelize": "^3.23.3",
-    "shot": "^3.1.0"
+    "shot": "^3.1.0",
+    "typescript": "^1.8.10"
   },
   "peerDependencies": {
     "sequelize": "3.x"
   },
   "dependencies": {
+    "boom": "^3.2.2",
     "ramda": "^0.21.0",
     "validator": "^5.4.0"
   }

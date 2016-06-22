@@ -1,9 +1,8 @@
-'use strict';
 
+import * as R from "ramda";
 
-const modelIdentifiers = require('./modelIdentifiers');
-const validator = require('validator');
-const R = require('ramda');
+const identifiers = require("./modelIdentifiers");
+const validator = require("validator");
 
 /**
  *  Generates queries for sequelize
@@ -16,7 +15,7 @@ module.exports = R.curry(function queryGenerator(sequelize, pathHistory, context
   return generator(sequelize, history, context);
 });
 
-const generator = module.exports.generator = function generator(sequelize, history, context, queryAcc) {
+const generator = module.exports.generator = function generator(sequelize, history, context, queryAcc?) {
   // Parameters is an object wich can define the following rules.
   // {
   //   attributes: ['', '', ...], //The attributes to query,
@@ -41,30 +40,30 @@ const generator = module.exports.generator = function generator(sequelize, histo
     model: sequelize.models[first.model]
   };
 
-  if(queryAcc) {
-    //TODO Add embedded objects to the query
-    if(context.query.embed && context.query.embed[queryAcc.model.name]) {
+  if (queryAcc) {
+    // TODO Add embedded objects to the query
+    if (context.query.embed && context.query.embed[queryAcc.model.name]) {
       delete context.query.embed[queryAcc.model.name];
     }
     else {
       queryAcc.attributes = [];
     }
-    q.include = [queryAcc];
+    q["include"] = [queryAcc];
   }
 
   let where = {};
 
-  if(context.identifiers && context.identifiers[first.identifier]) {
-    let modelIds = modelIdentifiers(sequelize.models[first.model]);
+  if (context.identifiers && context.identifiers[first.identifier]) {
+    let modelIds = identifiers(sequelize.models[first.model]);
     Object.keys(modelIds).forEach((id) => {
       let _id = context.identifiers[first.identifier];
-      if(modelIds[id] == 'INTEGER' && validator.isInt(String(_id))) {
+      if (modelIds[id] === "INTEGER" && validator.isInt(String(_id))) {
         modelIds[id] = Number(_id);
       }
-      else if(modelIds[id] == 'UUID' && validator.isUUID(String(_id))) {
+      else if (modelIds[id] === "UUID" && validator.isUUID(String(_id))) {
         modelIds[id] = _id;
       }
-      else if(modelIds[id] != 'INTEGER' && modelIds[id] != 'UUID') {
+      else if (modelIds[id] !== "INTEGER" && modelIds[id] !== "UUID") {
         modelIds[id] = String(_id);
       }
       else {
@@ -72,22 +71,22 @@ const generator = module.exports.generator = function generator(sequelize, histo
       }
     });
 
-    if(Object.keys(modelIds).length == 1) {
+    if (Object.keys(modelIds).length === 1) {
       where = modelIds;
     }
     else {
-      where.$or = modelIds;
+      where["$or"] = modelIds;
     }
   }
 
 
-  if(Object.keys(where).length !== 0) {
-    q.where = where;
+  if (Object.keys(where).length !== 0) {
+    q["where"] = where;
   }
 
-  if(history.length === 0) {
+  if (history.length === 0) {
 
-    if(context.query.embed && Object.keys(context.query.embed).length > 0) {
+    if (context.query.embed && Object.keys(context.query.embed).length > 0) {
       let remainingToEmbed = [];
 
       Object.keys(context.query.embed).forEach((model) => {
@@ -95,19 +94,19 @@ const generator = module.exports.generator = function generator(sequelize, histo
           model: sequelize.models[model]
         });
       });
-      q.include = R.concat(q.include || [], remainingToEmbed);
+      q["include"] = R.concat(q["include"] || [], remainingToEmbed);
     }
 
-    if(context.query.attributes) {
-      q.where = R.merge(context.query.attributes, q.where);
+    if (context.query.attributes) {
+      q["where"] = R.merge(context.query.attributes, q["where"]);
     }
 
-    if(context.query.pagination) {
+    if (context.query.pagination) {
       q = R.merge(context.query.pagination, q);
     }
 
-    if(context.method == 'put' || context.method == 'post') {
-      q.returning = true;
+    if (context.method === "put" || context.method === "post") {
+      q["returning"] = true;
     }
 
     return q;

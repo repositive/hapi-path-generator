@@ -8,8 +8,8 @@ const R = require('ramda');
 const util = require('util');
 
 describe('Path Generator', () => {
-  const modelRelations = require('../src/sequelize/modelRelations');
-  const pathGenerator = require('../src/pathGenerator');
+  const modelRelations = require('../dist/sequelize/modelRelations');
+  const pathGenerator = require('../dist/pathGenerator');
   let server;
   let sequelize;
   let models;
