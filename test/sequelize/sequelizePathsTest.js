@@ -4,7 +4,7 @@ const chai = require('chai');
 const should = chai.should();
 const expect = chai.expect;
 const hapi = require('../serverSetup');
-const hapiPaths = require('../../dist/sequelize/sequelizePaths');
+const hapiPaths = require('../../dist/sequelize/sequelizePaths').default;
 const R = require('ramda');
 const util = require('util');
 
