@@ -9,7 +9,7 @@ const util = require('util');
 
 describe('Query Validator', () => {
   const queryValidator = require('../../dist/sequelize/httpQueryParser');
-  const modelRelations = require('../../dist/sequelize/modelRelations');
+  const modelRelations = require('../../dist/sequelize/modelRelations').default;
 
   let server;
   let models;

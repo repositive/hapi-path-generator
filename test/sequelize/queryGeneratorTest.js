@@ -9,7 +9,7 @@ const util = require('util');
 
 describe('sequelizeQueryGenerator', () => {
   const queryGenerator = require('../../dist/sequelize/queryGenerator');
-  const modelRelations = require('../../dist/sequelize/modelRelations');
+  const modelRelations = require('../../dist/sequelize/modelRelations').default;
   let server;
   let models;
   let sequelize;

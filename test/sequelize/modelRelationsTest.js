@@ -8,7 +8,7 @@ const R = require('ramda');
 const util = require('util');
 
 describe('Model Relations', () => {
-  const modelRelations = require('../../dist/sequelize/modelRelations');
+  const modelRelations = require('../../dist/sequelize/modelRelations').default;
   let server;
   let models;
   let sequelize;
@@ -22,7 +22,7 @@ describe('Model Relations', () => {
   });
 
   describe('Relation Extractor Helper', () => {
-    const relationExtractor = modelRelations.relationExtractor;
+    const relationExtractor = require('../../dist/sequelize/modelRelations').relationExtractor;
 
     it('relationExtractor should return an array', () => {
       let relations = relationExtractor(models.user);
@@ -56,24 +56,24 @@ describe('Model Relations', () => {
         }
       },
       users: {
-        relations: {
-          addresses: 'many',
-          tags: 'many',
-          usr_tags: 'many'
-        },
         model: 'user',
         identifiers: {
           id: 'INTEGER',
           nationalId: 'STRING'
+        },
+        relations: {
+          addresses: 'many',
+          tags: 'many',
+          usr_tags: 'many'
         }
       },
       poscodes: {
-        relations: {
-          addresses: 'many'
-        },
         model: 'poscode',
         identifiers: {
           id: 'INTEGER'
+        },
+        relations: {
+          addresses: 'many'
         }
       },
       nonrelated: {

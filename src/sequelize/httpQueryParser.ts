@@ -1,6 +1,5 @@
 
-import * as R from "ramda";
-
+import * as R from 'ramda';
 
 module.exports = R.curry(function(relationSchema, model, query) {
   return urlQueryParser(relationSchema, model, query);
@@ -16,10 +15,10 @@ const urlQueryParser = module.exports.urlQueryParser = function(relationSchema, 
 
   if (raw.embed) {
     let models = {};
-    raw.embed.forEach((model) => {
-      models[model] = true;
+    raw.embed.forEach((_model) => {
+      models[_model] = true;
     });
-    query["embed"] = models;
+    query['embed'] = models;
   }
 
   Object.keys(raw).filter((key) => {
@@ -29,21 +28,18 @@ const urlQueryParser = module.exports.urlQueryParser = function(relationSchema, 
     query.attributes[key] = raw[key];
   });
 
-  let pagination = ["limit", "offset", "order"];
+  let pagination = ['limit', 'offset', 'order'];
 
   pagination.filter((key) => {
     // throw raw[key];
     return !R.isNil(raw[key]);
   })
   .forEach((key) => {
-    if (key === "order" && !Array.isArray(raw[key])) {
+    if (key === 'order' && !Array.isArray(raw[key])) {
       raw[key] = [raw[key]];
     }
     query.pagination[key] = raw[key];
   });
-
-
-
 
   return query;
 };

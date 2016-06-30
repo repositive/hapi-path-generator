@@ -1,9 +1,9 @@
 
 import * as R from "ramda";
 
+import sequelizeSchema from './modelRelations';
 
 const sequelizeQueryParser = require("./httpQueryParser");
-const sequelizeSchema = require("./modelRelations");
 const sequelizeQueryGenerator = require("./queryGenerator");
 
 const pathGenerator = require("../pathGenerator");

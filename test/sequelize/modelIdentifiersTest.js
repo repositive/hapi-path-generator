@@ -8,7 +8,7 @@ const R = require('ramda');
 
 
 describe('Model Identifiers', () => {
-  const modelIdentifiers = require('../../dist/sequelize/modelIdentifiers');
+  const modelIdentifiers = require('../../dist/sequelize/modelIdentifiers').default;
   let identifiers;
   let server;
   let models;
