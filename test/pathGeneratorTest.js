@@ -9,7 +9,7 @@ const util = require('util');
 
 describe('Path Generator', () => {
   const modelRelations = require('../dist/sequelize/modelRelations').default;
-  const pathGenerator = require('../dist/pathGenerator');
+  const pathGenerator = require('../dist/pathGenerator').default;
   let server;
   let sequelize;
   let models;
@@ -42,7 +42,7 @@ describe('Path Generator', () => {
   });
 
   describe('table generator', () => {
-    const tableGenerator = pathGenerator.tableGenerator;
+    const tableGenerator = require('../dist/pathGenerator').tableGenerator;
 
     it('should return an array', () => {
       let result = tableGenerator({options: defaultOptions}, 'users', schema);
@@ -149,7 +149,7 @@ describe('Path Generator', () => {
 
 
   describe('row generator', () => {
-    const rowGenerator = pathGenerator.rowGenerator;
+    const rowGenerator = require('../dist/pathGenerator').rowGenerator;
 
     it('should return an array', () => {
       let result = rowGenerator({options: defaultOptions,options: defaultOptions}, 'users', schema);

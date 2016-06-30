@@ -1,16 +1,7 @@
 
 import * as R from 'ramda';
 import modelIdentifiers from './modelIdentifiers';
-
-type RelationMap = {[tableName: string]: 'one' | 'many'};
-
-type ModelRepresentation = {
-  identifiers: {[id: string]: string};
-  model: string;
-  relations: RelationMap;
-}
-
-type RelationTree = {[tableName: string]: ModelRepresentation }
+import {RelationTree, RelationMap} from '../pathGenerator';
 
 /**
  *  Returns an array with the name of the tables related with the model provided

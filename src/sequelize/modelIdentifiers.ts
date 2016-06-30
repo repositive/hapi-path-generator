@@ -1,7 +1,7 @@
 
 import {Model} from 'sequelize';
 
-export default function modelIdentifiers(model: Model<any, any>): {[id: string]: string | number } {
+export default function modelIdentifiers(model: Model<any, any>): {[id: string]: string } {
   let identifiers: {[id: string]: string} = {};
   Object.keys(model['tableAttributes']).forEach((value) => {
     let definition = model['tableAttributes'][value];

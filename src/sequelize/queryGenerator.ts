@@ -2,6 +2,7 @@
 import * as R from 'ramda';
 
 import identifiers from './modelIdentifiers';
+import {IdentifierMap} from '../pathGenerator';
 
 const validator = require('validator');
 
@@ -14,7 +15,6 @@ const generator = module.exports.generator = function generator(sequelize, histo
   };
 
   if (queryAcc) {
-    // TODO Add embedded objects to the query
     if (context.query.embed && context.query.embed[queryAcc.model.name]) {
       delete context.query.embed[queryAcc.model.name];
     }
@@ -27,7 +27,9 @@ const generator = module.exports.generator = function generator(sequelize, histo
   let where = {};
 
   if (context.identifiers && context.identifiers[first.identifier]) {
-    let modelIds = identifiers(sequelize.models[first.model]);
+
+    let modelIds: IdentifierMap = identifiers(sequelize.models[first.model]);
+
     Object.keys(modelIds).forEach((id) => {
       let _id = context.identifiers[first.identifier];
       if (modelIds[id] === 'INTEGER' && validator.isInt(String(_id))) {

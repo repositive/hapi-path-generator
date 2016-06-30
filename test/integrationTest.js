@@ -145,7 +145,7 @@ describe('Integration', () => {
     });
   });
 
-  it('should return a list of routes',() => {
+  it.skip('should return a list of routes',() => {
     return inject({
       method: 'get',
       url: '/routes'

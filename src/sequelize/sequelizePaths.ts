@@ -1,18 +1,35 @@
 
-import * as R from "ramda";
+import * as R from 'ramda';
 
 import sequelizeSchema from './modelRelations';
+import {Route} from '../pathGenerator';
+import pathGenerator from '../pathGenerator';
 
-const sequelizeQueryParser = require("./httpQueryParser");
-const sequelizeQueryGenerator = require("./queryGenerator");
+const sequelizeQueryParser = require('./httpQueryParser');
+const sequelizeQueryGenerator = require('./queryGenerator');
 
-const pathGenerator = require("../pathGenerator");
+const methodMap = module.exports.methodMap = {
+  table: {
+    get: 'findAll',
+    post: 'create',
+    delete: 'destroy'
+  },
+  row: {
+    get: 'findOne',
+    put: 'update',
+    delete: 'destroy'
+  }
+};
 
-module.exports = function paths(sequelize, options) {
+interface HandleRoute extends Route {
+  query: <T>(context: any) => Promise<T>;
+}
+
+export default function paths(sequelize, options): HandleRoute[] {
 
   let schema = sequelizeSchema(sequelize);
 
-  return pathGenerator(schema, options).map((route) => {
+  return pathGenerator(schema, options).map((route: HandleRoute) => {
     let state = R.clone(route.history[route.history.length - 1]);
     let model = sequelize.models[state.model];
 
@@ -24,7 +41,7 @@ module.exports = function paths(sequelize, options) {
       context.query = queryParser(context.query || {});
       context.method = route.method;
 
-      if (route.method === "get") {
+      if (route.method === 'get') {
         context.query.limit = context.query.limit || options.defaultLimit;
         if (context.query.limit > options.maxItems) {
           context.query.limit = options.maxItems;
@@ -37,21 +54,21 @@ module.exports = function paths(sequelize, options) {
 
       let fParams = [query];
 
-      if (R.contains(route.method, ["put", "post", "update"])) {
+      if (R.contains(route.method, ['put', 'post', 'update'])) {
         fParams.unshift(context.payload);
       }
 
       return f.apply(model, fParams).then((response) => {
-        if (route.method === "put") {
+        if (route.method === 'put') {
           let updated = response[1];
-          if (state.type === "row") {
+          if (state.type === 'row') {
             return updated.length === 0 ? null : updated[0];
           }
           else {
             return updated;
           }
         }
-        if (route.method === "delete") {
+        if (route.method === 'delete') {
           return {deleted: response};
         }
         else {
@@ -62,17 +79,4 @@ module.exports = function paths(sequelize, options) {
 
     return route;
   });
-};
-
-const methodMap = module.exports.methodMap = {
-  table: {
-    get: "findAll",
-    post: "create",
-    delete: "destroy"
-  },
-  row: {
-    get: "findOne",
-    put: "update",
-    delete: "destroy"
-  }
 };

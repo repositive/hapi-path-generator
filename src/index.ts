@@ -1,14 +1,14 @@
 
-import * as R from "ramda";
-import * as Boom from "boom";
+import * as R from 'ramda';
+import {Request} from 'hapi';
 
-const paths = require("./sequelize/sequelizePaths");
+import paths from './sequelize/sequelizePaths';
 
 function deepMerge(v1, v2) {
   if (Array.isArray(v1) && Array.isArray(v2)) {
     return R.uniq(R.concat(v1, v2));
   }
-  else if (typeof v1 === "object" && typeof v2 === "object") {
+  else if (typeof v1 === 'object' && typeof v2 === 'object') {
     return R.mergeWith(deepMerge, v1, v2);
   }
   else {
@@ -24,7 +24,7 @@ const hapiRouteGenerator = {
     options.relationLimit = options.relationLimit || 3;
 
     // Set a prefix to all the enpoints generated
-    options.prefix = options.prefix || "";
+    options.prefix = options.prefix || '';
 
     // This object is added as configuration to all the endpoints
     options.config = options.config || {};
@@ -33,7 +33,7 @@ const hapiRouteGenerator = {
     // Valid options:
     // curly {identifier}
     // colons :identifier
-    options.idFormat = options.idFormat || "curly";
+    options.idFormat = options.idFormat || 'curly';
 
     // Sets the maximun ammount of items a user can get from get queries.
     // If the limit in the query is forced by the user the api return as max this number of items
@@ -48,24 +48,25 @@ const hapiRouteGenerator = {
       let generatedPaths = paths(sequelize, options);
 
       // Used to convert the path into an id
-      let matchBars = new RegExp("[\/]", "g");
+      let matchBars = new RegExp('[\/]', 'g');
 
-      let parsedPaths = generatedPaths.map((route) => {
+      generatedPaths.map((route) => {
 
-
-        let routeId = `${route.method}${route.path.replace(matchBars, ".")}`;
+        let routeId = `${route.method}${route.path.replace(matchBars, '.')}`;
 
         server.route({
           path: route.path,
           method: route.method,
           config: R.mergeWith(deepMerge, options.config, {
-            handler: function(req, rep) {
+            handler: function(req: Request, rep) {
+              req.app.route = route;
+
               let context = {
                 query: req.query,
                 identifiers: req.params
               };
               if (req.payload) {
-                context["payload"] = req.payload;
+                context['payload'] = req.payload;
               }
               route.query(context).then((response) => {
                 rep(response);
@@ -84,28 +85,17 @@ const hapiRouteGenerator = {
         };
       });
 
-      server.route({
-        path: "/routes",
-        method: "get",
-        config: {
-          handler: function(req, rep) {
-            rep(parsedPaths);
-          }
-        }
-      });
-
       done();
     }
     else {
-      throw Error("You should pass an instance of sequelizer as parameter");
+      throw Error('You should pass an instance of sequelizer as parameter');
     }
   }
 
 };
 
-hapiRouteGenerator.register["attributes"] = {
-  pkg: require("../package.json")
+hapiRouteGenerator.register['attributes'] = {
+  pkg: require('../package.json')
 };
-
 
 module.exports = hapiRouteGenerator;
