@@ -5,7 +5,7 @@ import sequelizeSchema from './modelRelations';
 import {Route} from '../pathGenerator';
 import pathGenerator from '../pathGenerator';
 
-const sequelizeQueryParser = require('./httpQueryParser');
+import sequelizeQueryParser from './httpQueryParser';
 const sequelizeQueryGenerator = require('./queryGenerator');
 
 const methodMap = module.exports.methodMap = {

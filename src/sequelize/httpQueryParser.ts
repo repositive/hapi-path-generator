@@ -46,6 +46,6 @@ const urlQueryParser = module.exports.urlQueryParser = function(relationSchema, 
   return query;
 };
 
-module.exports = R.curry(function(relationSchema, model, query) {
+export default R.curry(function(relationSchema, model, query) {
   return urlQueryParser(relationSchema, model, query);
 });
