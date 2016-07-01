@@ -1,10 +1,6 @@
 
 import * as R from 'ramda';
 
-module.exports = R.curry(function(relationSchema, model, query) {
-  return urlQueryParser(relationSchema, model, query);
-});
-
 const urlQueryParser = module.exports.urlQueryParser = function(relationSchema, model, raw) {
   let query = {
     attributes: {},
@@ -15,9 +11,15 @@ const urlQueryParser = module.exports.urlQueryParser = function(relationSchema, 
 
   if (raw.embed) {
     let models = {};
-    raw.embed.forEach((_model) => {
-      models[_model] = true;
-    });
+    if (Array.isArray(raw.embed)) {
+      raw.embed.forEach((_model) => {
+        models[_model] = true;
+      });
+    }
+    else {
+      models[raw.embed] = true;
+    }
+
     query['embed'] = models;
   }
 
@@ -43,3 +45,7 @@ const urlQueryParser = module.exports.urlQueryParser = function(relationSchema, 
 
   return query;
 };
+
+module.exports = R.curry(function(relationSchema, model, query) {
+  return urlQueryParser(relationSchema, model, query);
+});
