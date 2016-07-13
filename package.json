@@ -7,8 +7,8 @@
     "type": "private"
   },
   "scripts": {
-    "testCI": "npm install && typings install && tsc && mocha ./test/ --recursive",
-    "test": "npm install && typings install && tsc && mocha -w -c -R nyan -u bdd ./test/ --recursive",
+    "testCI": "npm install && typings install && tsc --outDir dist && mocha ./test/ --recursive",
+    "test": "npm install && nodemon -L -e ts --watch ./src/main --exec 'rm -fr dist && tsc --outDir dist && mocha --debug -c -R nyan -u bdd ./test/ --recursive'",
     "cov": "istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec ./test/ --recursive && cat ./coverage/lcov.info | ./node_modules/.bin/codacy-coverage"
   },
   "author": "Ruben Paz",
@@ -18,6 +18,7 @@
     "hapi": "^13.4.1",
     "hapi-sequelize": "^2.2.4",
     "mocha": "^2.5.3",
+    "nodemon": "^1.9.2",
     "pg": "^5.0.0",
     "sequelize": "^3.23.3",
     "shot": "^3.1.0",

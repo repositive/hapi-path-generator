@@ -2,8 +2,10 @@ version: '2'
 services:
   node:
     image: node
-    command: /bin/sh -c "while true; do echo hello world; sleep 1; done"
+    command: /bin/sh -c "npm test"
     working_dir: /opt
+    ports:
+      - "5858:5858"
     volumes:
      - .:/opt
     depends_on:

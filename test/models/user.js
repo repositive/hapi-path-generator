@@ -15,6 +15,15 @@ module.exports = function(sequelize, Types) {
           models.user.hasMany(models.address);
           models.user.belongsToMany(models.tag, {through: 'usr_tags'});
         }
+      },
+      scopes: {
+        withA: {
+          where: {
+            name: {
+              $like: 'a%'
+            }
+          }
+        }
       }
     }
   );
