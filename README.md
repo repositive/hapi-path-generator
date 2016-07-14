@@ -12,7 +12,7 @@ The project generates routes and the crud operations based on sequelize models.
 The routes generated are of two types
 
 - Table
-  - Examples: `/users`, `/users/`, `/users/1/addresses`
+  - Examples: `/users`, `/users`, `/users/1/addresses?city=London`
   - Valid Methods
     - GET *Returns an array of table rows based on the generated query**
     - POST *Creates a new entry based on the payload*
@@ -23,6 +23,16 @@ The routes generated are of two types
     - GET *Returns the row matching the generated query**
     - PUT *Updates the row using the payload provided matching the generated query**
     - DELETE *Deletes the row that matches the generated query**
+
+
+Querying
+------
+
+You can filter using query parameters when doing get requests:
+`/users?name=Istar&age=25`
+
+Or using sequelize scopes:
+`/users?sequelizeScopeName`
 
 Setting it up
 ------

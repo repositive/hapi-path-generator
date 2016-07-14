@@ -4,7 +4,7 @@ import * as R from 'ramda';
 const urlQueryParser = module.exports.urlQueryParser = function(relationSchema, model, raw) {
   let query = {
     attributes: {},
-    scopes: {},
+    scope: null,
     pagination: {
       limit : 10
     }
@@ -35,7 +35,7 @@ const urlQueryParser = module.exports.urlQueryParser = function(relationSchema, 
     return !R.isNil(model.options.scopes[key]);
   })
   .forEach((key) => {
-    query.scopes[key] = true;
+    query.scope = key;
   });
 
   let pagination = ['limit', 'offset', 'order'];

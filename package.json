@@ -8,7 +8,7 @@
   },
   "scripts": {
     "testCI": "npm install && typings install && tsc --outDir dist && mocha ./test/ --recursive",
-    "test": "npm install && nodemon -L -R min -e ts,ts,json --ignore ./dist --exec 'rm -fr dist && tsc --outDir dist && mocha --debug -c -u bdd ./test/ --recursive'",
+    "test": "npm install && nodemon -L -R min -e ts,js,json --ignore ./dist --exec 'rm -fr dist && tsc --outDir dist && mocha --debug -c -u bdd ./test/ --recursive'",
     "cov": "istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec ./test/ --recursive && cat ./coverage/lcov.info | ./node_modules/.bin/codacy-coverage"
   },
   "author": "Ruben Paz",

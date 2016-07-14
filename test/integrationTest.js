@@ -48,6 +48,10 @@ describe('Integration', () => {
     });
   });
 
+  after(() => {
+    return sequelize.models.user.destroy({where: {}});
+  })
+
   it('should create a new user', () => {
     return inject({
       method: 'post',
@@ -164,4 +168,43 @@ describe('Integration', () => {
     let route = server.lookup('get.users');
     route.settings.tags.should.contain('test');
   });
+
+  it('should return empty if nothing matches the scope', () => {
+    return inject({
+      method: 'get',
+      url: '/users?withA'
+    })
+    .then(rep => {
+      should.exist(rep.payload);
+      let result = JSON.parse(rep.payload);
+      result.should.be.a('array');
+      rep.statusCode.should.equal(200);
+    });
+  });
+
+  it('should return empty if nothing matches the scope', () => {
+    return inject({
+      method: 'post',
+      url: '/users',
+      payload: {
+        name: 'andrea'
+      }
+    })
+    .then(rep => {
+      rep.statusCode.should.equal(200);
+      
+      return inject({
+        method: 'get',
+        url: '/users?limit=1&withA=true'
+      })
+      .then(rep => {
+        should.exist(rep.payload);
+        let result = JSON.parse(rep.payload);
+        result.should.be.a('array');
+        result[0].name.should.equal('andrea');
+      });
+  
+    })
+  });
+
 });

@@ -50,7 +50,16 @@ export default function paths(sequelize, options): HandleRoute[] {
 
       let query = queryGenerator(context);
 
-      let f = sequelize.models[state.model][methodMap[state.type][route.method]];
+      let base;
+
+      if (context.query.scope) {
+        base = sequelize.models[state.model].scope(context.query.scope);
+      }
+      else {
+        base = sequelize.models[state.model];
+      }
+
+      let f = base[methodMap[state.type][route.method]];
 
       let fParams = [query];
 
@@ -58,7 +67,7 @@ export default function paths(sequelize, options): HandleRoute[] {
         fParams.unshift(context.payload);
       }
 
-      return f.apply(model, fParams).then((response) => {
+      return f.apply(base, fParams).then((response) => {
         if (route.method === 'put') {
           let updated = response[1];
           if (state.type === 'row') {
