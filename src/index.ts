@@ -74,7 +74,7 @@ const hapiRouteGenerator = {
               })
               .catch((err) => {
                 if (err.name && err.name === 'SequelizeValidationError') {
-                  rep(badRequest(err.errors));
+                  rep(badRequest(err.errors[0].message));
                 }
                 else {
                   rep(badImplementation());
