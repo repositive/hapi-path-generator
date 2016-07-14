@@ -99,7 +99,7 @@ describe('Create', () => {
   it('should delete a user', () => {
     let create = getRoute('post', '/users');
     let createContext = {
-      payload: {}
+      payload: { name: 'One' }
     };
     return create.query(createContext).then((userR) => {
       let del = getRoute('delete', `/users/{user_id}`);

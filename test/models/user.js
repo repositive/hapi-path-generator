@@ -2,7 +2,10 @@
 module.exports = function(sequelize, Types) {
   return sequelize.define('user',
     {
-      name: Types.STRING,
+      name: {
+        type: Types.STRING,
+        allowNull: false
+      },
       description: Types.TEXT,
       nationalId: {
         type: Types.STRING,

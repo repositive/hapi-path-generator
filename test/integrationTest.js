@@ -125,6 +125,19 @@ describe('Integration', () => {
     });
   });
 
+  it('should throw an error if payload is not valid', () => {
+    return inject({
+      method: 'post',
+      url: '/users',
+      payload: {
+        name: null
+      }
+    })
+    .then(rep => {
+      rep.statusCode.should.equal(400);
+    })
+  })
+
   it('should delete users',() => {
     return inject({
       method: 'get',
