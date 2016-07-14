@@ -46,6 +46,11 @@ describe('Query Validator', () => {
       result.attributes.name.should.equal('Istar');
     });
 
+    it('should return the scopes', () => {
+      let result = queryParser(schema, models.user, {withA: true});
+      should.exist(result.scopes.withA);
+    });
+
     it('should add limit, offset & order to pagination', () => {
       let result = queryParser(schema, models.user, {limit: 10, offset: 10, order: ['name', 'desc']});
       result.should.deep.equal({
@@ -54,7 +59,8 @@ describe('Query Validator', () => {
           limit: 10,
           offset: 10,
           order: ['name', 'desc']
-        }
+        },
+        scopes: {},
       });
     });
 
@@ -66,7 +72,8 @@ describe('Query Validator', () => {
           limit: 10,
           offset: 10,
           order: ['name']
-        }
+        },
+        scopes: {}
       });
     });
   });
