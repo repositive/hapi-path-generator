@@ -105,5 +105,5 @@ The project assumes that you will be using hapi with sequelize.
 
 Contributing.
 ------
-Run the `./project.sh test dev` script.
+Run `docker-compose up`.
 Docker & Docker compose are required.
