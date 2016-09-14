@@ -2,7 +2,7 @@ version: '2'
 services:
   node:
     image: node
-    command: /bin/sh -c "npm test"
+    command: /bin/sh -c "npm run setup && npm test"
     working_dir: /opt
     ports:
       - "5858:5858"

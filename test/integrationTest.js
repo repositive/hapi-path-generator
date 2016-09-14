@@ -154,9 +154,6 @@ describe('Integration', () => {
         url: `/users/${user.id}`
       })
       .then((rep) => {
-        should.exist(rep.payload);
-        let result = JSON.parse(rep.payload);
-        result.should.be.a('object');
         rep.statusCode.should.equal(200);
       });
     });

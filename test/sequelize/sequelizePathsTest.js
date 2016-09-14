@@ -110,9 +110,6 @@ describe('Create', () => {
       };
       should.exist(del);
       return del.query(delContext).then((response) => {
-        should.exist(response);
-        should.exist(response.deleted);
-        response.deleted.should.equal(1);
       });
     });
   });
