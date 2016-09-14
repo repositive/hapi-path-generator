@@ -155,6 +155,8 @@ describe('Integration', () => {
       })
       .then((rep) => {
         rep.statusCode.should.equal(200);
+        let res = JSON.parse(rep.payload);
+        Number(res.id).should.equal(user.id);
       });
     });
   });

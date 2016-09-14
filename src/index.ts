@@ -1,7 +1,7 @@
 
 import * as R from 'ramda';
 import {Request} from 'hapi';
-import {badImplementation, badRequest} from 'boom';
+import {badImplementation, badRequest, wrap} from 'boom';
 
 import paths from './sequelize/sequelizePaths';
 
@@ -77,7 +77,7 @@ const hapiRouteGenerator = {
                   rep(badRequest(err.errors[0].message));
                 }
                 else {
-                  rep(badImplementation());
+                  rep(wrap(err));
                 }
               });
             },

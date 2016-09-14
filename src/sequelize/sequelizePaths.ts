@@ -78,7 +78,7 @@ export default function paths(sequelize, options): HandleRoute[] {
           }
         }
         if (route.method === 'delete') {
-          return undefined;
+          return {id: context.identifiers[state.identifier]};
         }
         else {
           return response;
