@@ -82,6 +82,10 @@ const generator = module.exports.generator = function generator(sequelize, histo
     if (context.method === 'put' || context.method === 'post') {
       q['returning'] = true;
     }
+    
+    if (context.method === 'put' || context.method === 'delete') {
+      q['individualHooks'] = true;
+    }
 
     return q;
   }
